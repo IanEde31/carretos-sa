@@ -144,7 +144,7 @@ export default function AuthDebug() {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, []);
+  }, [checkAuthentication]);
 
   return (
     <Card className="w-full max-w-md mx-auto">

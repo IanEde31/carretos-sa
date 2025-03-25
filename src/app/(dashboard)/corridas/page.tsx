@@ -1,17 +1,16 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Image from 'next/image';
 import { 
   Plus, 
   Search, 
   Filter, 
-  ArrowUpDown,
   MoreHorizontal,
   Car,
   CheckCircle,
   XCircle,
   Upload,
-  Image,
   MapPin,
   User,
   Phone,
@@ -34,7 +33,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -73,7 +71,6 @@ import {
   getMotoristas, 
   criarSolicitacaoECorrida, 
   atribuirMotorista, 
-  atualizarStatusCorrida, 
   finalizarCorrida, 
   cancelarCorrida, 
   NovaCorridaForm, 
@@ -83,7 +80,6 @@ import {
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
 
 // Tamanho máximo permitido para upload de imagens (5MB)
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -304,9 +300,11 @@ export default function CorridasPage() {
     setTiposVeiculos(getTiposVeiculos());
   }, []);
   
-  // Observar alterações nos arquivos de fotos e gerar previews
+  // Observar alterações nas fotos de carga e gerar previews
   useEffect(() => {
-    const fotos = novaCorrida.watch('fotos_carga');
+    const fotosCargaField = novaCorrida.watch('fotos_carga');
+    const fotos = fotosCargaField;
+    
     if (fotos && fotos.length > 0) {
       const previews = Array.from(fotos).map(file => URL.createObjectURL(file));
       setFotosCargaPreviews(previews);
@@ -316,11 +314,13 @@ export default function CorridasPage() {
         previews.forEach(url => URL.revokeObjectURL(url));
       };
     }
-  }, [novaCorrida.watch('fotos_carga')]);
+  }, [novaCorrida]);
   
   // Observar alterações nas fotos de entrega e gerar previews
   useEffect(() => {
-    const fotos = finalizarCorridaForm.watch('fotos_entrega');
+    const fotosEntregaField = finalizarCorridaForm.watch('fotos_entrega');
+    const fotos = fotosEntregaField;
+    
     if (fotos && fotos.length > 0) {
       const previews = Array.from(fotos).map(file => URL.createObjectURL(file));
       setFotosEntregaPreviews(previews);
@@ -330,8 +330,8 @@ export default function CorridasPage() {
         previews.forEach(url => URL.revokeObjectURL(url));
       };
     }
-  }, [finalizarCorridaForm.watch('fotos_entrega')]);
-
+  }, [finalizarCorridaForm]);
+  
   // Carregar dados
   async function loadCorridas() {
     setLoading(true);
@@ -742,7 +742,7 @@ export default function CorridasPage() {
                                 <FormField
                                   control={novaCorrida.control}
                                   name="fotos_carga"
-                                  render={({ field: { onChange, value, ...fieldProps } }) => (
+                                  render={({ field: { onChange, ...fieldProps } }) => (
                                     <FormItem>
                                       <FormLabel className="flex items-center gap-2">
                                         <Image className="w-4 h-4" />
@@ -781,36 +781,15 @@ export default function CorridasPage() {
                                           {/* Mostrar previews de imagens */}
                                           {fotosCargaPreviews.length > 0 && (
                                             <div className="grid grid-cols-3 gap-2 mt-2">
-                                              {fotosCargaPreviews.map((url, idx) => (
-                                                <div key={idx} className="relative group overflow-hidden rounded-md aspect-square">
-                                                  <img 
+                                              {fotosCargaPreviews.map((url, i) => (
+                                                <div key={i} className="relative aspect-square rounded-md overflow-hidden">
+                                                  <Image 
                                                     src={url} 
-                                                    alt={`Preview ${idx+1}`} 
-                                                    className="object-cover w-full h-full"
+                                                    alt={`Foto de carga ${i+1}`}
+                                                    fill
+                                                    className="object-cover"
+                                                    sizes="(max-width: 768px) 100px, 150px"
                                                   />
-                                                  <div 
-                                                    className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity"
-                                                    onClick={() => {
-                                                      const newFiles = Array.from(novaCorrida.getValues('fotos_carga') || [])
-                                                        .filter((_, i) => i !== idx);
-                                                      
-                                                      novaCorrida.setValue('fotos_carga', 
-                                                        newFiles.length ? 
-                                                          Object.assign(
-                                                            new DataTransfer().files, 
-                                                            newFiles
-                                                          ) : undefined
-                                                      );
-                                                      
-                                                      // Revoke the URL to avoid memory leaks
-                                                      URL.revokeObjectURL(url);
-                                                      
-                                                      // Remove the preview
-                                                      setFotosCargaPreviews(prev => prev.filter((_, i) => i !== idx));
-                                                    }}
-                                                  >
-                                                    <XCircle className="w-6 h-6 text-white" />
-                                                  </div>
                                                 </div>
                                               ))}
                                             </div>
@@ -1048,62 +1027,60 @@ export default function CorridasPage() {
               <Card>
                 <CardContent className="pt-6">
                   <div className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4 mb-4">
-                      <div className="bg-muted p-4 rounded-lg">
-                        <h3 className="font-medium text-sm mb-2">Detalhes da Corrida</h3>
-                        <div className="grid grid-cols-1 gap-2 text-sm">
-                          <div className="flex items-start gap-2">
-                            <User className="h-4 w-4 mt-0.5 text-muted-foreground" />
-                            <span className="text-muted-foreground">Cliente:</span>
-                            <span className="font-medium">{corridaSelecionada?.solicitacao?.cliente_nome}</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground" />
-                            <span className="text-muted-foreground">Origem:</span>
-                            <span className="font-medium">{corridaSelecionada?.solicitacao?.endereco_origem}</span>
-                          </div>
-                          <div className="flex items-start gap-2">
-                            <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground" />
-                            <span className="text-muted-foreground">Destino:</span>
-                            <span className="font-medium">{corridaSelecionada?.solicitacao?.endereco_destino}</span>
-                          </div>
+                    <div className="bg-muted p-4 rounded-lg">
+                      <h3 className="font-medium text-sm mb-2">Detalhes da Corrida</h3>
+                      <div className="grid grid-cols-1 gap-2 text-sm">
+                        <div className="flex items-start gap-2">
+                          <User className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                          <span className="text-muted-foreground">Cliente:</span>
+                          <span className="font-medium">{corridaSelecionada?.solicitacao?.cliente_nome}</span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                          <span className="text-muted-foreground">Origem:</span>
+                          <span className="font-medium">{corridaSelecionada?.solicitacao?.endereco_origem}</span>
+                        </div>
+                        <div className="flex items-start gap-2">
+                          <MapPin className="h-4 w-4 mt-0.5 text-muted-foreground" />
+                          <span className="text-muted-foreground">Destino:</span>
+                          <span className="font-medium">{corridaSelecionada?.solicitacao?.endereco_destino}</span>
                         </div>
                       </div>
-                      
-                      <FormField
-                        control={atribuirMotoristaForm.control}
-                        name="motorista_id"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="flex items-center gap-2">
-                              <Car className="w-4 h-4" />
-                              Motorista
-                            </FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Selecione um motorista" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {motoristas.map((motorista) => (
-                                  <SelectItem key={motorista.id} value={motorista.id}>
-                                    {motorista.nome}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormDescription>
-                              O motorista selecionado receberá uma notificação sobre esta corrida
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
                     </div>
+                    
+                    <FormField
+                      control={atribuirMotoristaForm.control}
+                      name="motorista_id"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel className="flex items-center gap-2">
+                            <Car className="w-4 h-4" />
+                            Motorista
+                          </FormLabel>
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Selecione um motorista" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              {motoristas.map((motorista) => (
+                                <SelectItem key={motorista.id} value={motorista.id}>
+                                  {motorista.nome}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormDescription>
+                            O motorista selecionado receberá uma notificação sobre esta corrida
+                          </FormDescription>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </CardContent>
               </Card>
@@ -1280,7 +1257,7 @@ export default function CorridasPage() {
                         <FormField
                           control={finalizarCorridaForm.control}
                           name="fotos_entrega"
-                          render={({ field: { onChange, value, ...fieldProps } }) => (
+                          render={({ field: { onChange, ...fieldProps } }) => (
                             <FormItem>
                               <FormLabel className="flex items-center gap-2">
                                 <Image className="w-4 h-4" />
@@ -1319,36 +1296,15 @@ export default function CorridasPage() {
                                   {/* Mostrar previews de imagens */}
                                   {fotosEntregaPreviews.length > 0 && (
                                     <div className="grid grid-cols-3 gap-2 mt-2">
-                                      {fotosEntregaPreviews.map((url, idx) => (
-                                        <div key={idx} className="relative group overflow-hidden rounded-md aspect-square">
-                                          <img 
+                                      {fotosEntregaPreviews.map((url, i) => (
+                                        <div key={i} className="relative aspect-square rounded-md overflow-hidden">
+                                          <Image 
                                             src={url} 
-                                            alt={`Preview ${idx+1}`} 
-                                            className="object-cover w-full h-full"
+                                            alt={`Foto de entrega ${i+1}`}
+                                            fill
+                                            className="object-cover"
+                                            sizes="(max-width: 768px) 100px, 150px"
                                           />
-                                          <div 
-                                            className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity"
-                                            onClick={() => {
-                                              const newFiles = Array.from(finalizarCorridaForm.getValues('fotos_entrega') || [])
-                                                .filter((_, i) => i !== idx);
-                                              
-                                              finalizarCorridaForm.setValue('fotos_entrega', 
-                                                newFiles.length ? 
-                                                  Object.assign(
-                                                    new DataTransfer().files, 
-                                                    newFiles
-                                                  ) : undefined
-                                              );
-                                              
-                                              // Revoke the URL to avoid memory leaks
-                                              URL.revokeObjectURL(url);
-                                              
-                                              // Remove the preview
-                                              setFotosEntregaPreviews(prev => prev.filter((_, i) => i !== idx));
-                                            }}
-                                          >
-                                            <XCircle className="w-6 h-6 text-white" />
-                                          </div>
                                         </div>
                                       ))}
                                     </div>

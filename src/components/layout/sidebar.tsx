@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { signOut } from '@/lib/supabase/auth';
 import { useRouter } from 'next/navigation';
 
 export function Sidebar() {
@@ -23,9 +22,6 @@ export function Sidebar() {
 
   const handleSignOut = async () => {
     try {
-      // Em produção, chamaria signOut()
-      // await signOut();
-      
       // Redirecionar para página de login
       router.push('/login');
     } catch (error) {

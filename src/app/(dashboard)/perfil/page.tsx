@@ -1,15 +1,6 @@
-'use client';
-
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -48,7 +39,7 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 type PasswordFormValues = z.infer<typeof passwordSchema>;
 
 export default function PerfilPage() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<{ nome: string; email: string } | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState(true);
   const [isUpdatingProfile, setIsUpdatingProfile] = useState(false);
   const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);

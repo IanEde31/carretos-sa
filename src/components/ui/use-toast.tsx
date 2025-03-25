@@ -135,6 +135,11 @@ function dispatch(action: Action) {
   })
 }
 
+export interface ToastActionElement {
+  altText: string;
+  action: React.ReactNode;
+}
+
 interface Toast extends Omit<ToasterToast, "id"> {}
 
 function toast({ ...props }: Toast) {

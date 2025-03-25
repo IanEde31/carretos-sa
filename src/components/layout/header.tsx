@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LucideAlertCircle, LucideBell, LucideSearch, LucideSun, LucideMoon } from 'lucide-react';
+import { LucideBell, LucideSearch, LucideSun, LucideMoon } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { useTheme } from 'next-themes';
 import { mockTeamMembers } from '@/data/mockData';

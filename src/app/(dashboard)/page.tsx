@@ -27,7 +27,7 @@ export default function DashboardPage() {
   });
   const [rides, setRides] = useState<Corrida[]>([]);
   const [drivers, setDrivers] = useState<Motorista[]>([]);
-  const [showAuthDebug, _] = useState(true);
+  const [showAuthDebug, _] = useState(false);
 
   useEffect(() => {
     async function loadDashboardData() {

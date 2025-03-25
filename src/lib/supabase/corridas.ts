@@ -113,28 +113,30 @@ export async function uploadImagens(files: File[], prefix: string): Promise<stri
   if (!files || files.length === 0) return [];
   
   try {
-    const uploadedFiles = await Promise.all(
-      Array.from(files).map(async (file, index) => {
-        const extension = file.name.split('.').pop();
-        const fileName = `${prefix}_${Date.now()}_${index}.${extension}`;
+    const uploadedFiles: string[] = [];
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+      const extension = file.name.split('.').pop();
+      const fileName = `${prefix}_${Date.now()}_${index}.${extension}`;
+      
+      // Upload do arquivo para o Storage
+      const result = await supabase.storage
+        .from('corridas')
+        .upload(fileName, file);
         
-        const { data, error } = await supabase.storage
-          .from('corridas')
-          .upload(fileName, file);
-          
-        if (error) {
-          console.error('Erro ao fazer upload de arquivo:', error);
-          throw error;
-        }
+      // Verificar se houve erro
+      if (result.error) {
+        console.error('Erro ao fazer upload de arquivo:', result.error);
+        continue;
+      }
+      
+      // Retornar URL pública do arquivo
+      const { data: urlData } = supabase.storage
+        .from('corridas')
+        .getPublicUrl(fileName);
         
-        // Retornar URL pública do arquivo
-        const { data: urlData } = supabase.storage
-          .from('corridas')
-          .getPublicUrl(fileName);
-          
-        return urlData.publicUrl;
-      })
-    );
+      uploadedFiles.push(urlData.publicUrl);
+    }
     
     return uploadedFiles;
   } catch (error) {

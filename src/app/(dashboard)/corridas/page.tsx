@@ -300,7 +300,6 @@ export default function CorridasPage() {
     setTiposVeiculos(getTiposVeiculos());
   }, []);
   
-  // Observar alterações nas fotos de carga e gerar previews
   useEffect(() => {
     const fotosCargaField = novaCorrida.watch('fotos_carga');
     const fotos = fotosCargaField;
@@ -316,7 +315,6 @@ export default function CorridasPage() {
     }
   }, [novaCorrida]);
   
-  // Observar alterações nas fotos de entrega e gerar previews
   useEffect(() => {
     const fotosEntregaField = finalizarCorridaForm.watch('fotos_entrega');
     const fotos = fotosEntregaField;
@@ -716,7 +714,7 @@ export default function CorridasPage() {
                                       </FormLabel>
                                       <Select
                                         onValueChange={field.onChange}
-                                        defaultValue={field.value}
+                                        value={field.value}
                                       >
                                         <FormControl>
                                           <SelectTrigger>
@@ -1059,7 +1057,7 @@ export default function CorridasPage() {
                           </FormLabel>
                           <Select
                             onValueChange={field.onChange}
-                            defaultValue={field.value}
+                            value={field.value}
                           >
                             <FormControl>
                               <SelectTrigger>
@@ -1190,7 +1188,7 @@ export default function CorridasPage() {
                                 <FormLabel className="flex items-center gap-2">Avaliação (1-5)</FormLabel>
                                 <Select
                                   onValueChange={field.onChange}
-                                  defaultValue={field.value}
+                                  value={field.value}
                                 >
                                   <FormControl>
                                     <SelectTrigger>

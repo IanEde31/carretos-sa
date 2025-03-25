@@ -5,8 +5,6 @@ import {
   Plus, 
   Search, 
   Filter, 
-  ArrowUpDown,
-  MoreHorizontal,
   Upload,
   X,
   Camera
@@ -22,14 +20,6 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -42,8 +32,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDes
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -53,10 +41,10 @@ import {
   getMotoristas, 
   updateMotoristaStatus, 
   deleteMotorista, 
-  type Motorista, 
-  type MotoristaFormData 
+  type Motorista
 } from '@/lib/supabase/motoristas';
 import { toast } from '@/components/ui/use-toast';
+import Image from 'next/image';
 
 // Tipos de arquivo aceitos para uploads
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -293,10 +281,12 @@ export default function MotoristasPage() {
                           <div className="flex flex-col items-center justify-center mb-4">
                             <div className="relative w-32 h-32 rounded-full overflow-hidden bg-muted flex items-center justify-center mb-2 border-2 border-dashed border-muted-foreground/25">
                               {form.watch('foto_perfil') ? (
-                                <img 
-                                  src={URL.createObjectURL(form.watch('foto_perfil'))} 
-                                  alt="Foto de perfil" 
-                                  className="w-full h-full object-cover"
+                                <Image
+                                  src={URL.createObjectURL(form.watch('foto_perfil'))}
+                                  alt="Foto de perfil"
+                                  className="object-cover rounded-full"
+                                  fill
+                                  sizes="128px"
                                 />
                               ) : (
                                 <Camera className="h-12 w-12 text-muted-foreground/70" />
@@ -528,20 +518,13 @@ export default function MotoristasPage() {
                                           <div className="bg-muted p-2 rounded flex items-center justify-center">
                                             {value.type.includes('image') ? (
                                               <div className="relative w-full">
-                                                <img
+                                                <Image
                                                   src={URL.createObjectURL(value)}
-                                                  alt="Doc preview"
+                                                  alt="Visualização da CNH"
+                                                  width={200}
+                                                  height={150}
                                                   className="max-h-40 object-contain"
                                                 />
-                                                <Button
-                                                  variant="destructive"
-                                                  size="icon"
-                                                  className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-                                                  type="button"
-                                                  onClick={() => form.setValue('doc_cnh', null)}
-                                                >
-                                                  <X className="h-3 w-3" />
-                                                </Button>
                                               </div>
                                             ) : (
                                               <div className="relative">
@@ -600,20 +583,13 @@ export default function MotoristasPage() {
                                           <div className="bg-muted p-2 rounded flex items-center justify-center">
                                             {value.type.includes('image') ? (
                                               <div className="relative w-full">
-                                                <img
+                                                <Image
                                                   src={URL.createObjectURL(value)}
-                                                  alt="Doc preview"
+                                                  alt="Visualização do documento de identidade"
+                                                  width={200}
+                                                  height={150}
                                                   className="max-h-40 object-contain"
                                                 />
-                                                <Button
-                                                  variant="destructive"
-                                                  size="icon"
-                                                  className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-                                                  type="button"
-                                                  onClick={() => form.setValue('doc_identidade', null)}
-                                                >
-                                                  <X className="h-3 w-3" />
-                                                </Button>
                                               </div>
                                             ) : (
                                               <div className="relative">
@@ -673,20 +649,13 @@ export default function MotoristasPage() {
                                         <div className="bg-muted p-2 rounded flex items-center justify-center">
                                           {value.type.includes('image') ? (
                                             <div className="relative w-full">
-                                              <img
+                                              <Image
                                                 src={URL.createObjectURL(value)}
-                                                alt="Doc preview"
+                                                alt="Visualização do documento do veículo"
+                                                width={200}
+                                                height={150}
                                                 className="max-h-40 object-contain"
                                               />
-                                              <Button
-                                                variant="destructive"
-                                                size="icon"
-                                                className="absolute -top-2 -right-2 h-6 w-6 rounded-full"
-                                                type="button"
-                                                onClick={() => form.setValue('doc_veiculo', null)}
-                                              >
-                                                <X className="h-3 w-3" />
-                                              </Button>
                                             </div>
                                           ) : (
                                             <div className="relative">

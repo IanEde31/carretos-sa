@@ -41,7 +41,7 @@ export function Sidebar() {
   const navItems = [
     { 
       name: 'Dashboard', 
-      href: '/', 
+      href: '/home', 
       icon: <LayoutDashboard className="h-5 w-5" /> 
     },
     { 

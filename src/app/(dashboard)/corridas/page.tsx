@@ -16,7 +16,8 @@ import {
   Phone,
   FileText,
   Truck,
-  Package
+  Package,
+  Image as ImageIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -743,7 +744,7 @@ export default function CorridasPage() {
                                   render={({ field: { onChange, ...fieldProps } }) => (
                                     <FormItem>
                                       <FormLabel className="flex items-center gap-2">
-                                        <Image className="w-4 h-4" />
+                                        <ImageIcon className="w-4 h-4" />
                                         Fotos da Carga
                                       </FormLabel>
                                       <FormControl>
@@ -1114,7 +1115,7 @@ export default function CorridasPage() {
                       Detalhes
                     </TabsTrigger>
                     <TabsTrigger value="fotos" className="flex items-center gap-2">
-                      <Image className="w-4 h-4" />
+                      <ImageIcon className="w-4 h-4" />
                       Fotos de Entrega
                     </TabsTrigger>
                   </TabsList>
@@ -1258,7 +1259,7 @@ export default function CorridasPage() {
                           render={({ field: { onChange, ...fieldProps } }) => (
                             <FormItem>
                               <FormLabel className="flex items-center gap-2">
-                                <Image className="w-4 h-4" />
+                                <ImageIcon className="w-4 h-4" />
                                 Fotos da Entrega
                               </FormLabel>
                               <FormControl>

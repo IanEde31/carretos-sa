@@ -305,7 +305,7 @@ export default function CorridasPage() {
     const fotos = fotosCargaField;
     
     if (fotos && fotos.length > 0) {
-      const previews = Array.from(fotos).map(file => URL.createObjectURL(file));
+      const previews = Array.from(fotos).map(file => URL.createObjectURL(file as Blob));
       setFotosCargaPreviews(previews);
       
       // Limpeza dos blobs quando o componente desmontar
@@ -320,7 +320,7 @@ export default function CorridasPage() {
     const fotos = fotosEntregaField;
     
     if (fotos && fotos.length > 0) {
-      const previews = Array.from(fotos).map(file => URL.createObjectURL(file));
+      const previews = Array.from(fotos).map(file => URL.createObjectURL(file as Blob));
       setFotosEntregaPreviews(previews);
       
       // Limpeza dos blobs quando o componente desmontar

@@ -41,7 +41,8 @@ import {
   getMotoristas, 
   updateMotoristaStatus, 
   deleteMotorista, 
-  type Motorista
+  type Motorista,
+  type MotoristaFormData
 } from '@/lib/supabase/motoristas';
 import { toast } from '@/components/ui/use-toast';
 import Image from 'next/image';
@@ -147,12 +148,12 @@ export default function MotoristasPage() {
       veiculo_descricao: '',
       status: 'ativo',
       placa_veiculo: '',
-      capacidade_carga: '',
+      capacidade_carga: 0,
       area_atuacao: '',
-      foto_perfil: null,
-      doc_cnh: null,
-      doc_identidade: null,
-      doc_veiculo: null,
+      foto_perfil: undefined,
+      doc_cnh: undefined,
+      doc_identidade: undefined,
+      doc_veiculo: undefined,
     },
   });
 
@@ -162,7 +163,14 @@ export default function MotoristasPage() {
     
     try {
       // Enviar dados para a API
-      const novoMotorista = await createMotorista(data);
+      const formData: MotoristaFormData = {
+        ...data,
+        doc_cnh: data.doc_cnh || undefined,
+        doc_identidade: data.doc_identidade || undefined,
+        doc_veiculo: data.doc_veiculo || undefined,
+        foto_perfil: data.foto_perfil || undefined
+      };
+      const novoMotorista = await createMotorista(formData);
       
       // Atualizar a lista de motoristas
       setMotoristas(prev => [...prev, novoMotorista]);
@@ -282,7 +290,7 @@ export default function MotoristasPage() {
                             <div className="relative w-32 h-32 rounded-full overflow-hidden bg-muted flex items-center justify-center mb-2 border-2 border-dashed border-muted-foreground/25">
                               {form.watch('foto_perfil') ? (
                                 <Image
-                                  src={URL.createObjectURL(form.watch('foto_perfil'))}
+                                  src={URL.createObjectURL(form.watch('foto_perfil') as Blob)}
                                   alt="Foto de perfil"
                                   className="object-cover rounded-full"
                                   fill
@@ -519,11 +527,11 @@ export default function MotoristasPage() {
                                             {value.type.includes('image') ? (
                                               <div className="relative w-full">
                                                 <Image
-                                                  src={URL.createObjectURL(value)}
-                                                  alt="Visualização da CNH"
-                                                  width={200}
-                                                  height={150}
-                                                  className="max-h-40 object-contain"
+                                                  src={URL.createObjectURL(value as Blob)}
+                                                  alt="CNH do motorista"
+                                                  className="object-cover"
+                                                  fill
+                                                  sizes="(max-width: 768px) 100vw, 300px"
                                                 />
                                               </div>
                                             ) : (
@@ -584,11 +592,11 @@ export default function MotoristasPage() {
                                             {value.type.includes('image') ? (
                                               <div className="relative w-full">
                                                 <Image
-                                                  src={URL.createObjectURL(value)}
-                                                  alt="Visualização do documento de identidade"
-                                                  width={200}
-                                                  height={150}
-                                                  className="max-h-40 object-contain"
+                                                  src={URL.createObjectURL(value as Blob)}
+                                                  alt="Documento de identidade"
+                                                  className="object-cover"
+                                                  fill
+                                                  sizes="(max-width: 768px) 100vw, 300px"
                                                 />
                                               </div>
                                             ) : (
@@ -650,11 +658,11 @@ export default function MotoristasPage() {
                                           {value.type.includes('image') ? (
                                             <div className="relative w-full">
                                               <Image
-                                                src={URL.createObjectURL(value)}
-                                                alt="Visualização do documento do veículo"
-                                                width={200}
-                                                height={150}
-                                                className="max-h-40 object-contain"
+                                                src={URL.createObjectURL(value as Blob)}
+                                                alt="Documento do veículo"
+                                                className="object-cover"
+                                                fill
+                                                sizes="(max-width: 768px) 100vw, 300px"
                                               />
                                             </div>
                                           ) : (

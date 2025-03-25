@@ -1,0 +1,51 @@
+import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr';
+
+// Rotas públicas que não precisam de autenticação
+const publicRoutes = ['/login', '/api/auth'];
+
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
+  
+  // Se a rota for pública, permite o acesso
+  if (publicRoutes.some(route => pathname.startsWith(route))) {
+    return NextResponse.next();
+  }
+  
+  // Cria um cliente Supabase para o servidor
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get: (name) => request.cookies.get(name)?.value,
+        set: (name, value, options) => {
+          // Este é apenas para o middleware, não definimos cookies aqui
+        },
+        remove: (name, options) => {
+          // Este é apenas para o middleware, não removemos cookies aqui
+        },
+      },
+    }
+  );
+  
+  // Verifica se o usuário está autenticado
+  const { data: { session } } = await supabase.auth.getSession();
+  
+  // Se não houver sessão e a rota não for pública, redireciona para a página de login
+  if (!session && !publicRoutes.some(route => pathname.startsWith(route))) {
+    console.log('Usuário não autenticado. Redirecionando para login...');
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  console.log('Usuário autenticado. Permitindo acesso a:', pathname);
+  return NextResponse.next();
+}
+
+// Configuração do matcher para proteger as rotas específicas
+export const config = {
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|robots.txt|logo.svg).*)',
+  ],
+};

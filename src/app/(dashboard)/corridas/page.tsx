@@ -772,7 +772,9 @@ export default function CorridasPage() {
                                                 onChange={(e) => {
                                                   onChange(e.target.files);
                                                 }}
-                                                {...fieldProps}
+                                                name={fieldProps.name}
+                                                ref={fieldProps.ref}
+                                                onBlur={fieldProps.onBlur}
                                               />
                                             </Label>
                                           </div>
@@ -1287,7 +1289,9 @@ export default function CorridasPage() {
                                         onChange={(e) => {
                                           onChange(e.target.files);
                                         }}
-                                        {...fieldProps}
+                                        name={fieldProps.name}
+                                        ref={fieldProps.ref}
+                                        onBlur={fieldProps.onBlur}
                                       />
                                     </Label>
                                   </div>

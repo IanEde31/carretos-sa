@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { supabase, checkAuth } from '@/lib/supabase/config';
 import { toast } from '@/components/ui/use-toast';
 import { AlertCircle, CheckCircle, RefreshCw } from 'lucide-react';
@@ -22,11 +21,15 @@ export default function AuthDebug() {
       if (data?.session) {
         setAuthStatus('authenticated');
         setUserId(data.session.user.id);
-        setEmail(data.session.user.email);
+        setEmail(data.session.user.email || null);
         
         // Formatar data de expiração
-        const expiryDate = new Date(data.session.expires_at! * 1000);
-        setSessionExpiry(expiryDate.toLocaleString());
+        if (data.session.expires_at !== undefined) {
+          const expiryDate = new Date(data.session.expires_at * 1000);
+          setSessionExpiry(expiryDate.toLocaleString());
+        } else {
+          setSessionExpiry(null);
+        }
         
         // Testar uma consulta simples
         testQuery();
@@ -129,10 +132,14 @@ export default function AuthDebug() {
       if (session) {
         setAuthStatus('authenticated');
         setUserId(session.user.id);
-        setEmail(session.user.email);
+        setEmail(session.user.email || null);
         
-        const expiryDate = new Date(session.expires_at! * 1000);
-        setSessionExpiry(expiryDate.toLocaleString());
+        if (session.expires_at !== undefined) {
+          const expiryDate = new Date(session.expires_at * 1000);
+          setSessionExpiry(expiryDate.toLocaleString());
+        } else {
+          setSessionExpiry(null);
+        }
       } else {
         setAuthStatus('unauthenticated');
         setUserId(null);
@@ -152,17 +159,19 @@ export default function AuthDebug() {
         <CardTitle className="flex items-center justify-between">
           Status de Autenticação
           {authStatus === 'loading' ? (
-            <Badge variant="outline" className="bg-yellow-100 text-yellow-800">
+            <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-yellow-500 text-yellow-800">
               Verificando...
-            </Badge>
+            </div>
           ) : authStatus === 'authenticated' ? (
-            <Badge variant="outline" className="bg-green-100 text-green-800">
-              <CheckCircle className="w-3 h-3 mr-1" /> Autenticado
-            </Badge>
+            <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-green-500 text-white">
+              <CheckCircle className="h-3 w-3 mr-1" />
+              Autenticado
+            </div>
           ) : (
-            <Badge variant="outline" className="bg-red-100 text-red-800">
-              <AlertCircle className="w-3 h-3 mr-1" /> Não Autenticado
-            </Badge>
+            <div className="inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold bg-destructive text-destructive-foreground">
+              <AlertCircle className="h-3 w-3 mr-1" />
+              Não Autenticado
+            </div>
           )}
         </CardTitle>
         <CardDescription>
@@ -210,14 +219,14 @@ export default function AuthDebug() {
             <Button 
               variant="secondary"
               onClick={refreshSession}
-              disabled={authStatus === 'loading'}
+              disabled={authStatus !== 'authenticated'}
             >
               Atualizar Sessão
             </Button>
             <Button 
               variant="destructive"
               onClick={signOut}
-              disabled={authStatus === 'loading'}
+              disabled={authStatus !== 'authenticated'}
             >
               Logout
             </Button>

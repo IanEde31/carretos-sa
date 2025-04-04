@@ -4,15 +4,17 @@ import { useEffect, useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getDashboardMetrics, getUltimasCorridas, getMotoristasAtivos } from '@/lib/supabase/dashboard';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertTriangle } from 'lucide-react';
 import { type Corrida } from '@/lib/supabase/corridas';
 import { type Motorista } from '@/lib/supabase/motoristas';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/components/ui/use-toast';
 import AuthDebug from '@/components/auth-debug';
+import { testConnection, checkAuth } from '@/lib/supabase/config';
 
 export default function DashboardPage() {
   const [isLoading, setIsLoading] = useState(true);
+  const [connectionError, setConnectionError] = useState<string | null>(null);
   const { toast } = useToast();
   const [metrics, setMetrics] = useState({
     total_motoristas: 0,
@@ -27,12 +29,30 @@ export default function DashboardPage() {
   });
   const [rides, setRides] = useState<Corrida[]>([]);
   const [drivers, setDrivers] = useState<Motorista[]>([]);
-  const [showAuthDebug, _] = useState(false);
+  const [showAuthDebug, _] = useState(true); // Ativado por padrão para diagnóstico
 
   useEffect(() => {
     async function loadDashboardData() {
       try {
         setIsLoading(true);
+
+        // Verificar autenticação primeiro
+        console.log('Verificando status da autenticação...');
+        await checkAuth();
+
+        // Testar conexão com o Supabase
+        console.log('Testando conexão com o Supabase...');
+        const connectionTest = await testConnection();
+        
+        if (!connectionTest.success) {
+          console.error('Teste de conexão falhou:', connectionTest.error);
+          setConnectionError('Erro na conexão com o banco de dados. Verifique o console para mais detalhes.');
+          setIsLoading(false);
+          return;
+        }
+        
+        console.log('Conexão com Supabase confirmada, carregando dados...');
+        
         // Buscar métricas
         const metricsData = await getDashboardMetrics();
         setMetrics(metricsData);
@@ -52,6 +72,12 @@ export default function DashboardPage() {
         });
       } catch (error) {
         console.error('Erro ao carregar dados do dashboard:', error);
+        
+        if (error instanceof Error) {
+          setConnectionError(`Erro: ${error.message}`);
+        } else {
+          setConnectionError('Ocorreu um erro desconhecido. Verifique o console para mais detalhes.');
+        }
         
         // Exibir toast de erro
         toast({
@@ -79,6 +105,24 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-4 p-4 md:p-8 items-center justify-center min-h-[70vh]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
         <p className="text-muted-foreground">Carregando dashboard...</p>
+      </div>
+    );
+  }
+  
+  if (connectionError) {
+    return (
+      <div className="flex flex-col gap-4 p-4 md:p-8 items-center justify-center min-h-[70vh]">
+        <AlertTriangle className="h-12 w-12 text-destructive" />
+        <h2 className="text-xl font-bold text-destructive">Erro de Conexão</h2>
+        <p className="text-muted-foreground text-center max-w-md">{connectionError}</p>
+        <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md">
+          <h3 className="font-semibold mb-2">Possíveis soluções:</h3>
+          <ul className="list-disc pl-5 space-y-1">
+            <li>Verifique se as variáveis de ambiente estão configuradas no Vercel</li>
+            <li>Confirme se as políticas RLS do Supabase permitem acesso aos dados</li>
+            <li>Verifique se as tabelas existem no banco de dados</li>
+          </ul>
+        </div>
       </div>
     );
   }

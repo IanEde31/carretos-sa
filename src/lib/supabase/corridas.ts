@@ -44,6 +44,7 @@ export interface NovaCorridaForm {
   descricao?: string;
   fotos_carga?: File[]; // Arquivos de fotos da carga
   tipo_veiculo_requerido?: string; // Tipo de veículo necessário para a corrida
+  valor?: string; // Valor da corrida (em reais)
 }
 
 /**
@@ -181,7 +182,8 @@ export async function criarSolicitacaoECorrida(dados: NovaCorridaForm): Promise<
       .from('corridas')
       .insert([{
         solicitacao_id: solicitacao.id,
-        status: 'pendente'
+        status: 'pendente',
+        valor: dados.valor ? parseFloat(dados.valor) : null // Incluir o valor da corrida se fornecido
       }])
       .select()
       .single();

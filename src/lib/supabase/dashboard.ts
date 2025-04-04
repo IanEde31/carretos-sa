@@ -47,7 +47,7 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
     const corridasConcluidasResult = await supabase
       .from('corridas')
       .select('*', { count: 'exact', head: true })
-      .eq('status', 'concluída');
+      .eq('status', 'finalizada');
     
     console.log('Resultado da consulta de corridas concluídas:', corridasConcluidasResult);
     const corridasConcluidas = corridasConcluidasResult.count || 0;
@@ -68,17 +68,26 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
     console.log('Resultado da consulta de corridas canceladas:', corridasCanceladasResult);
     const corridasCanceladas = corridasCanceladasResult.count || 0;
 
-    // Calcular faturamento total
+    // Calcular faturamento total (valor total das corridas finalizadas)
     const faturamentoResult = await supabase
       .from('corridas')
-      .select('valor')
-      .eq('status', 'concluída');
+      .select('valor, status')
+      .eq('status', 'finalizada');
     
     console.log('Resultado da consulta de faturamento:', faturamentoResult);
     const faturamentoData = faturamentoResult.data;
-    const faturamentoTotal = faturamentoData
-      ? faturamentoData.reduce((acc, curr) => acc + (curr.valor || 0), 0)
+    console.log('Dados do faturamento:', faturamentoData);
+    
+    // Verificar se há dados e os valores são numéricos antes de somar
+    const faturamentoTotal = faturamentoData && faturamentoData.length > 0
+      ? faturamentoData.reduce((acc, curr) => {
+          const valor = typeof curr.valor === 'number' ? curr.valor : parseFloat(curr.valor || '0');
+          console.log(`Somando valor: ${valor} ao acumulado: ${acc}`);
+          return acc + valor;
+        }, 0)
       : 0;
+    
+    console.log('Faturamento total calculado:', faturamentoTotal);
 
     // Calcular faturamento do mês atual
     const dataAtual = new Date();
@@ -87,22 +96,30 @@ export async function getDashboardMetrics(): Promise<DashboardMetrics> {
 
     const faturamentoMesResult = await supabase
       .from('corridas')
-      .select('valor')
-      .eq('status', 'concluída')
+      .select('valor, data_fim')
+      .eq('status', 'finalizada')
       .gte('data_fim', primeiroDiaMes)
       .lte('data_fim', ultimoDiaMes);
     
     console.log('Resultado da consulta de faturamento do mês:', faturamentoMesResult);
     const faturamentoMesData = faturamentoMesResult.data;
-    const faturamentoMesAtual = faturamentoMesData
-      ? faturamentoMesData.reduce((acc, curr) => acc + (curr.valor || 0), 0)
+    console.log('Dados do faturamento do mês:', faturamentoMesData);
+    
+    // Verificar se há dados e os valores são numéricos antes de somar
+    const faturamentoMesAtual = faturamentoMesData && faturamentoMesData.length > 0
+      ? faturamentoMesData.reduce((acc, curr) => {
+          const valor = typeof curr.valor === 'number' ? curr.valor : parseFloat(curr.valor || '0');
+          return acc + valor;
+        }, 0)
       : 0;
+    
+    console.log('Faturamento do mês atual calculado:', faturamentoMesAtual);
 
     // Calcular avaliação média
     const avaliacoesResult = await supabase
       .from('corridas')
       .select('avaliacao')
-      .eq('status', 'concluída')
+      .eq('status', 'finalizada')
       .not('avaliacao', 'is', null);
     
     console.log('Resultado da consulta de avaliações:', avaliacoesResult);

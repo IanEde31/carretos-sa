@@ -17,7 +17,8 @@ import {
   FileText,
   Truck,
   Package,
-  Image as ImageIcon
+  Image as ImageIcon,
+  Calendar
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -95,6 +96,10 @@ const novaCorridaSchema = z.object({
   endereco_destino: z.string().min(5, 'Endereço de destino deve ter pelo menos 5 caracteres'),
   descricao: z.string().optional(),
   tipo_veiculo_requerido: z.string().optional(),
+  valor: z.string().optional().refine(
+    (val) => !val || /^\d+([,.]\d{1,2})?$/.test(val),
+    { message: 'Valor deve ser um número válido (ex: 50,00 ou 50.00)' }
+  ),
   fotos_carga: z
     .any()
     .optional()
@@ -255,6 +260,8 @@ export default function CorridasPage() {
   const [fotosCargaPreviews, setFotosCargaPreviews] = useState<string[]>([]);
   const [fotosEntregaPreviews, setFotosEntregaPreviews] = useState<string[]>([]);
   const [currentTab, setCurrentTab] = useState("cliente");
+  // Estado para o modal de detalhes
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   
   // Formulários com React Hook Form
   const novaCorrida = useForm<NovaCorrridaValues>({
@@ -740,6 +747,34 @@ export default function CorridasPage() {
                                 
                                 <FormField
                                   control={novaCorrida.control}
+                                  name="valor"
+                                  render={({ field }) => (
+                                    <FormItem>
+                                      <FormLabel className="flex items-center gap-2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-currency-circle-dollar">
+                                          <circle cx="12" cy="12" r="10" />
+                                          <path d="M8 12h8" />
+                                          <path d="M12 16V8" />
+                                          <path d="M16 12h-3a2 2 0 1 0 0 4h2a2 2 0 1 1 0 4H8" />
+                                        </svg>
+                                        Valor da Corrida
+                                      </FormLabel>
+                                      <FormControl>
+                                        <div className="relative">
+                                          <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">R$</span>
+                                          <Input placeholder="0,00" className="pl-10" {...field} />
+                                        </div>
+                                      </FormControl>
+                                      <FormDescription>
+                                        Informe o valor estimado para a corrida (opcional)
+                                      </FormDescription>
+                                      <FormMessage />
+                                    </FormItem>
+                                  )}
+                                />
+                                
+                                <FormField
+                                  control={novaCorrida.control}
                                   name="fotos_carga"
                                   render={({ field: { onChange, ...fieldProps } }) => (
                                     <FormItem>
@@ -866,7 +901,14 @@ export default function CorridasPage() {
             </TableHeader>
             <TableBody>
               {corridas.map((corrida) => (
-                <TableRow key={corrida.id}>
+                <TableRow 
+                  key={corrida.id} 
+                  className="cursor-pointer hover:bg-muted/50"
+                  onClick={() => {
+                    setCorridaSelecionada(corrida);
+                    setDetailsModalOpen(true);
+                  }}
+                >
                   <TableCell>{corrida.id?.substring(0, 8)}</TableCell>
                   <TableCell>{corrida.solicitacao?.cliente_nome}</TableCell>
                   <TableCell>{corrida.solicitacao?.endereco_origem?.substring(0, 30)}...</TableCell>
@@ -887,14 +929,19 @@ export default function CorridasPage() {
                   <TableCell className="text-right">
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Ações</DropdownMenuLabel>
                         <DropdownMenuItem
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setCorridaSelecionada(corrida);
                             setAtribuirDialogOpen(true);
                           }}
@@ -904,7 +951,8 @@ export default function CorridasPage() {
                           Atribuir Motorista
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setCorridaSelecionada(corrida);
                             setFinalizarDialogOpen(true);
                           }}
@@ -914,7 +962,8 @@ export default function CorridasPage() {
                           Finalizar Corrida
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => {
+                          onClick={(e) => {
+                            e.stopPropagation();
                             setCorridaSelecionada(corrida);
                             setCancelarDialogOpen(true);
                           }}
@@ -945,7 +994,14 @@ export default function CorridasPage() {
             </div>
           )}
           {corridas.map((corrida) => (
-            <div key={corrida.id} className="bg-card rounded-lg p-4 shadow-sm">
+            <div 
+              key={corrida.id} 
+              className="bg-card rounded-lg p-4 shadow-sm cursor-pointer hover:bg-muted/50"
+              onClick={() => {
+                setCorridaSelecionada(corrida);
+                setDetailsModalOpen(true);
+              }}
+            >
               <div className="flex items-center justify-between mb-2">
                 <div className="font-medium">Corrida #{corrida.id?.substring(0, 8)}</div>
                 <div>
@@ -1336,6 +1392,221 @@ export default function CorridasPage() {
               </DialogFooter>
             </form>
           </Form>
+        </DialogContent>
+      </Dialog>
+      
+      {/* Modal de Detalhes da Corrida */}
+      <Dialog open={detailsModalOpen} onOpenChange={setDetailsModalOpen}>
+        <DialogContent className="sm:max-w-[600px] max-h-[85vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Car className="h-5 w-5" /> 
+              Detalhes da Corrida
+            </DialogTitle>
+            <DialogDescription>
+              Informações completas sobre a corrida selecionada
+            </DialogDescription>
+          </DialogHeader>
+          
+          <ScrollArea className="flex-1 pr-4 -mr-4">
+            <div className="grid gap-4 pb-4">
+            {corridaSelecionada && (
+              <>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center justify-between">
+                  <div>
+                    <h2 className="text-xl font-semibold">Corrida #{corridaSelecionada.id?.substring(0, 8)}</h2>
+                    <p className={`text-sm font-medium px-2 py-1 rounded-full inline-flex mt-1 ${
+                      corridaSelecionada.status === 'pendente' ? 'bg-yellow-100 text-yellow-800' :
+                      corridaSelecionada.status === 'atribuída' ? 'bg-blue-100 text-blue-800' :
+                      corridaSelecionada.status === 'finalizada' ? 'bg-green-100 text-green-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {corridaSelecionada.status}
+                    </p>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      Criada em: {new Date(corridaSelecionada.created_at || '').toLocaleDateString('pt-BR')}
+                    </div>
+                    {corridaSelecionada.valor && (
+                      <div className="font-medium text-primary mt-1">
+                        Valor: R$ {corridaSelecionada.valor}
+                      </div>
+                    )}
+                  </div>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-4">
+                  {/* Informações do Cliente */}
+                  <Card>
+                    <CardContent className="pt-6">
+                      <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
+                        <User className="h-5 w-5 text-primary" />
+                        Informações do Cliente
+                      </h3>
+                      <div className="space-y-3">
+                        <div>
+                          <div className="text-sm font-medium">Nome</div>
+                          <div>{corridaSelecionada.solicitacao?.cliente_nome}</div>
+                        </div>
+                        <div>
+                          <div className="text-sm font-medium">Contato</div>
+                          <div className="flex items-center gap-2">
+                            <Phone className="h-4 w-4 text-muted-foreground" />
+                            {corridaSelecionada.solicitacao?.cliente_contato}
+                          </div>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                  
+                  {/* Informações do Motorista */}
+                  <Card>
+                    <CardContent className="pt-6">
+                      <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
+                        <Truck className="h-5 w-5 text-primary" />
+                        Informações do Motorista
+                      </h3>
+                      {corridaSelecionada.motorista_nome ? (
+                        <div className="space-y-3">
+                          <div>
+                            <div className="text-sm font-medium">Nome</div>
+                            <div>{corridaSelecionada.motorista_nome}</div>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-muted-foreground italic">
+                          Motorista ainda não atribuído a esta corrida
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                {/* Endereços */}
+                <Card>
+                  <CardContent className="pt-6">
+                    <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
+                      <MapPin className="h-5 w-5 text-primary" />
+                      Endereços
+                    </h3>
+                    <div className="space-y-4">
+                      <div>
+                        <div className="text-sm font-medium flex items-center gap-2">
+                          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs">A</span>
+                          Origem
+                        </div>
+                        <div className="mt-1 pl-8">{corridaSelecionada.solicitacao?.endereco_origem}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm font-medium flex items-center gap-2">
+                          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-primary/10 text-primary text-xs">B</span>
+                          Destino
+                        </div>
+                        <div className="mt-1 pl-8">{corridaSelecionada.solicitacao?.endereco_destino}</div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+                
+                {/* Descrição */}
+                {corridaSelecionada.solicitacao?.descricao && (
+                  <Card>
+                    <CardContent className="pt-6">
+                      <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
+                        <FileText className="h-5 w-5 text-primary" />
+                        Descrição
+                      </h3>
+                      <div className="whitespace-pre-wrap">
+                        {corridaSelecionada.solicitacao?.descricao}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+                
+                {/* Informações adicionais - mostrando apenas o que existe no tipo */}
+                {(corridaSelecionada.observacoes || corridaSelecionada.avaliacao || corridaSelecionada.distancia_km) && (
+                  <Card>
+                    <CardContent className="pt-6">
+                      <h3 className="text-lg font-medium mb-4">Informações Adicionais</h3>
+                      <div className="space-y-3">
+                        {corridaSelecionada.distancia_km && (
+                          <div>
+                            <div className="text-sm font-medium">Distância</div>
+                            <div>{corridaSelecionada.distancia_km} km</div>
+                          </div>
+                        )}
+                        {corridaSelecionada.avaliacao && (
+                          <div>
+                            <div className="text-sm font-medium">Avaliação</div>
+                            <div>{corridaSelecionada.avaliacao}/5</div>
+                          </div>
+                        )}
+                        {corridaSelecionada.observacoes && (
+                          <div>
+                            <div className="text-sm font-medium">Observações</div>
+                            <div>{corridaSelecionada.observacoes}</div>
+                          </div>
+                        )}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+              </>
+            )}
+            </div>
+          </ScrollArea>
+          
+          <DialogFooter className="flex flex-col sm:flex-row gap-3 sm:justify-between mt-6">
+            <Button variant="outline" onClick={() => setDetailsModalOpen(false)}>
+              Fechar
+            </Button>
+            
+            {corridaSelecionada && (
+              <div className="flex flex-wrap gap-2 justify-end">
+                {corridaSelecionada.status === 'pendente' && (
+                  <Button
+                    onClick={() => {
+                      setDetailsModalOpen(false);
+                      setAtribuirDialogOpen(true);
+                    }}
+                  >
+                    <Car className="mr-2 h-4 w-4" />
+                    Atribuir Motorista
+                  </Button>
+                )}
+                
+                {corridaSelecionada.status === 'atribuída' && (
+                  <Button
+                    onClick={() => {
+                      setDetailsModalOpen(false);
+                      setFinalizarDialogOpen(true);
+                    }}
+                    variant="default"
+                  >
+                    <CheckCircle className="mr-2 h-4 w-4" />
+                    Finalizar Corrida
+                  </Button>
+                )}
+                
+                {(corridaSelecionada.status === 'pendente' || corridaSelecionada.status === 'atribuída') && (
+                  <Button
+                    onClick={() => {
+                      setDetailsModalOpen(false);
+                      setCancelarDialogOpen(true);
+                    }}
+                    variant="destructive"
+                  >
+                    <XCircle className="mr-2 h-4 w-4" />
+                    Cancelar Corrida
+                  </Button>
+                )}
+              </div>
+            )}
+          </DialogFooter>
         </DialogContent>
       </Dialog>
       

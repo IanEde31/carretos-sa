@@ -7,7 +7,15 @@ import {
   Filter, 
   Upload,
   X,
-  Camera
+  Camera,
+  Info,
+  Phone,
+  Mail,
+  Calendar,
+  MapPin,
+  Truck,
+  Car,
+  User
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -115,6 +123,10 @@ export default function MotoristasPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [motoristas, setMotoristas] = useState<Motorista[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  
+  // Estado para o modal de detalhes
+  const [selectedMotorista, setSelectedMotorista] = useState<Motorista | null>(null);
+  const [detailsModalOpen, setDetailsModalOpen] = useState(false);
   
   // Carregar motoristas da API
   useEffect(() => {
@@ -766,7 +778,10 @@ export default function MotoristasPage() {
                 </TableRow>
               ) : (
                 motoristas.map(motorista => (
-                  <TableRow key={motorista.id}>
+                  <TableRow key={motorista.id} className="cursor-pointer hover:bg-muted/50" onClick={() => {
+                    setSelectedMotorista(motorista);
+                    setDetailsModalOpen(true);
+                  }}>
                     <TableCell>{motorista.id?.substring(0, 8)}</TableCell>
                     <TableCell>{motorista.nome}</TableCell>
                     <TableCell>{motorista.email}</TableCell>
@@ -782,10 +797,16 @@ export default function MotoristasPage() {
                     </TableCell>
                     <TableCell>{new Date(motorista.created_at || '').toLocaleDateString('pt-BR')}</TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="sm" onClick={() => handleStatusChange(motorista.id!, motorista.status === 'ativo' ? 'inativo' : 'ativo')}>
+                      <Button variant="ghost" size="sm" onClick={(e) => {
+                        e.stopPropagation(); // Evita que o clique propague para a linha
+                        handleStatusChange(motorista.id!, motorista.status === 'ativo' ? 'inativo' : 'ativo');
+                      }}>
                         {motorista.status === 'ativo' ? 'Inativar' : 'Ativar'}
                       </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleDelete(motorista.id!)}>
+                      <Button variant="ghost" size="sm" onClick={(e) => {
+                        e.stopPropagation(); // Evita que o clique propague para a linha
+                        handleDelete(motorista.id!);
+                      }}>
                         Excluir
                       </Button>
                     </TableCell>
@@ -808,37 +829,230 @@ export default function MotoristasPage() {
             </div>
           ) : (
             motoristas.map(motorista => (
-              <div key={motorista.id} className="bg-card rounded-lg p-4 shadow-sm">
+              <div 
+                key={motorista.id} 
+                className="bg-card rounded-lg p-4 shadow-sm cursor-pointer hover:bg-muted/50"
+                onClick={() => {
+                  setSelectedMotorista(motorista);
+                  setDetailsModalOpen(true);
+                }}
+              >
                 <div className="flex items-center justify-between mb-2">
                   <div className="font-medium">{motorista.nome}</div>
                   <div>
                     <span
-                      className={`inline-flex items-center rounded-full bg-${motorista.status === 'ativo' ? 'green' : 'red'}-100 px-2.5 py-0.5 text-xs font-medium text-${motorista.status === 'ativo' ? 'green' : 'red'}-800`}
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        motorista.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}
                     >
                       {motorista.status}
                     </span>
                   </div>
                 </div>
                 <div className="text-sm text-muted-foreground space-y-1">
-                  <div>ID: {motorista.id}</div>
+                  <div>ID: {motorista.id?.substring(0, 8)}</div>
                   <div>Email: {motorista.email}</div>
                   <div>Telefone: {motorista.telefone}</div>
                   <div>Veículo: {motorista.veiculo?.tipo}</div>
                   <div>Cadastro: {new Date(motorista.created_at || '').toLocaleDateString('pt-BR')}</div>
                 </div>
-                <div className="flex justify-end mt-3">
-                  <Button variant="ghost" size="sm" onClick={() => handleStatusChange(motorista.id!, motorista.status === 'ativo' ? 'inativo' : 'ativo')}>
-                    {motorista.status === 'ativo' ? 'Inativar' : 'Ativar'}
+                <div className="flex justify-between items-center mt-3">
+                  <Button variant="outline" size="sm" className="text-primary">
+                    <Info className="h-4 w-4 mr-1" /> Detalhes
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={() => handleDelete(motorista.id!)}>
-                    Excluir
-                  </Button>
+                  <div>
+                    <Button variant="ghost" size="sm" onClick={(e) => {
+                      e.stopPropagation();
+                      handleStatusChange(motorista.id!, motorista.status === 'ativo' ? 'inativo' : 'ativo');
+                    }}>
+                      {motorista.status === 'ativo' ? 'Inativar' : 'Ativar'}
+                    </Button>
+                    <Button variant="ghost" size="sm" onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(motorista.id!);
+                    }}>
+                      Excluir
+                    </Button>
+                  </div>
                 </div>
               </div>
             ))
           )}
         </div>
       </div>
+      
+      {/* Modal de Detalhes do Motorista */}
+      <Dialog open={detailsModalOpen} onOpenChange={setDetailsModalOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Truck className="h-5 w-5" /> 
+              Detalhes do Motorista
+            </DialogTitle>
+            <DialogDescription>
+              Informações completas sobre o motorista selecionado
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="grid gap-4">
+            {selectedMotorista && (
+              <>
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                    <Truck className="h-8 w-8 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">{selectedMotorista.nome}</h2>
+                    <p className={`text-sm font-medium px-2 py-1 rounded-full inline-flex ${
+                      selectedMotorista.status === 'ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                    }`}>
+                      {selectedMotorista.status}
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-medium text-sm">Documento</h3>
+                      <p className="text-sm">
+                        {selectedMotorista.documento || 'Não informado'}
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-sm">Telefone</h3>
+                      <p className="text-sm flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-muted-foreground" />
+                        {selectedMotorista.telefone || 'Não informado'}
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-sm">Email</h3>
+                      <p className="text-sm flex items-center gap-2">
+                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        {selectedMotorista.email || 'Não informado'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <h3 className="font-medium text-sm">Data de Cadastro</h3>
+                      <p className="text-sm flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        {new Date(selectedMotorista.data_cadastro || selectedMotorista.created_at || '').toLocaleDateString('pt-BR')}
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-sm">Veículo</h3>
+                      <p className="text-sm flex items-center gap-2">
+                        <Car className="h-4 w-4 text-muted-foreground" />
+                        {selectedMotorista.veiculo?.descricao || selectedMotorista.veiculo?.tipo || 'Não informado'}
+                      </p>
+                    </div>
+                    
+                    <div>
+                      <h3 className="font-medium text-sm">Placa</h3>
+                      <p className="text-sm">
+                        {selectedMotorista.veiculo?.placa || selectedMotorista.placa_veiculo || 'Não informado'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
+                {selectedMotorista.capacidade_carga && (
+                  <div className="border-t pt-4">
+                    <div>
+                      <h3 className="font-medium text-sm">Capacidade de Carga</h3>
+                      <p className="text-sm">
+                        {selectedMotorista.capacidade_carga} kg
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                {selectedMotorista.area_atuacao && (
+                  <div className="border-t pt-4">
+                    <div>
+                      <h3 className="font-medium text-sm">Área de Atuação</h3>
+                      <p className="text-sm">
+                        {selectedMotorista.area_atuacao}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                {selectedMotorista.foto_perfil_url && (
+                  <div className="border-t pt-4">
+                    <h3 className="font-medium text-sm">Foto de Perfil</h3>
+                    <div className="mt-2 max-w-[200px] max-h-[200px] rounded-md overflow-hidden relative">
+                      <Image 
+                        src={selectedMotorista.foto_perfil_url} 
+                        alt="Foto de perfil" 
+                        width={200} 
+                        height={200} 
+                        className="object-cover"
+                      />
+                    </div>
+                  </div>
+                )}
+                
+                <div className="border-t pt-4 flex gap-4 flex-wrap">
+                  {selectedMotorista.doc_cnh_url && (
+                    <div>
+                      <h3 className="font-medium text-sm mb-2">CNH</h3>
+                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.doc_cnh_url, '_blank')}>
+                        Visualizar Documento
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {selectedMotorista.doc_identidade_url && (
+                    <div>
+                      <h3 className="font-medium text-sm mb-2">Identidade</h3>
+                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.doc_identidade_url, '_blank')}>
+                        Visualizar Documento
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {selectedMotorista.doc_veiculo_url && (
+                    <div>
+                      <h3 className="font-medium text-sm mb-2">Documento do Veículo</h3>
+                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.doc_veiculo_url, '_blank')}>
+                        Visualizar Documento
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+          
+          <div className="flex justify-between mt-6">
+            <Button variant="outline" onClick={() => setDetailsModalOpen(false)}>
+              Fechar
+            </Button>
+            
+            {selectedMotorista && (
+              <div className="space-x-2">
+                <Button 
+                  variant={selectedMotorista.status === 'ativo' ? 'destructive' : 'default'}
+                  onClick={() => {
+                    handleStatusChange(selectedMotorista.id!, selectedMotorista.status === 'ativo' ? 'inativo' : 'ativo');
+                    setDetailsModalOpen(false);
+                  }}
+                >
+                  {selectedMotorista.status === 'ativo' ? 'Inativar Motorista' : 'Ativar Motorista'}
+                </Button>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

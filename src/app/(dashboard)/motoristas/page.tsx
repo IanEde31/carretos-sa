@@ -957,7 +957,7 @@ export default function MotoristasPage() {
                     <div>
                       <h3 className="font-medium text-sm">Placa</h3>
                       <p className="text-sm">
-                        {selectedMotorista.veiculo?.placa || selectedMotorista.placa_veiculo || 'Não informado'}
+                        {selectedMotorista.placa_veiculo || 'Não informado'}
                       </p>
                     </div>
                   </div>

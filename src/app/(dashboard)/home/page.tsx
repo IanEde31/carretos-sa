@@ -29,7 +29,7 @@ export default function DashboardPage() {
   });
   const [rides, setRides] = useState<Corrida[]>([]);
   const [drivers, setDrivers] = useState<Motorista[]>([]);
-  const [showAuthDebug, _] = useState(true); // Ativado por padrão para diagnóstico
+  const [showAuthDebug, _] = useState(false); // Desativado para evitar poluição visual
 
   useEffect(() => {
     async function loadDashboardData() {

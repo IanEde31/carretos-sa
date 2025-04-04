@@ -31,9 +31,9 @@ export interface Corrida {
   distancia_km?: number; // Distância percorrida em km
   created_at?: string;
   updated_at?: string;
-  // Campos adicionais para visualização
+  // Campos adicionais para visualização - não existem na tabela, são adicionados em runtime
   solicitacao?: Solicitacao;
-  motorista_nome?: string;
+  motorista_nome?: string; // Campo virtual adicionado pela função getCorridas
 }
 
 export interface NovaCorridaForm {

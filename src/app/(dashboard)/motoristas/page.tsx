@@ -916,7 +916,7 @@ export default function MotoristasPage() {
                     <div>
                       <h3 className="font-medium text-sm">Documento</h3>
                       <p className="text-sm">
-                        {selectedMotorista.documento || 'Não informado'}
+                        {selectedMotorista.documentos ? 'Documento cadastrado' : 'Não informado'}
                       </p>
                     </div>
                     

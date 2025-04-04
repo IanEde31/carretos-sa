@@ -243,7 +243,7 @@ export default function DashboardPage() {
                         </div>
                         <div className="space-y-1">
                           <p className="text-sm font-medium leading-none">
-                            {ride.nome_origem || 'Origem não definida'} → {ride.nome_destino || 'Destino não definido'}
+                            {ride.solicitacao?.endereco_origem || 'Origem não definida'} → {ride.solicitacao?.endereco_destino || 'Destino não definido'}
                           </p>
                           <p className="text-xs text-muted-foreground">
                             {ride.valor ? `R$ ${ride.valor.toFixed(2)}` : 'Valor não definido'}

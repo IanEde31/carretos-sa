@@ -1001,10 +1001,10 @@ export default function MotoristasPage() {
                 )}
                 
                 <div className="border-t pt-4 flex gap-4 flex-wrap">
-                  {selectedMotorista.cnh_url && (
+                  {selectedMotorista.documentos?.cnh && (
                     <div>
                       <h3 className="font-medium text-sm mb-2">CNH</h3>
-                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.cnh_url, '_blank')}>
+                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.documentos?.cnh, '_blank')}>
                         Visualizar Documento
                       </Button>
                     </div>
@@ -1019,10 +1019,10 @@ export default function MotoristasPage() {
                     </div>
                   )}
                   
-                  {selectedMotorista.documento_veiculo_url && (
+                  {selectedMotorista.documentos?.documento_veiculo && (
                     <div>
                       <h3 className="font-medium text-sm mb-2">Documento do Veículo</h3>
-                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.documento_veiculo_url, '_blank')}>
+                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.documentos?.documento_veiculo, '_blank')}>
                         Visualizar Documento
                       </Button>
                     </div>

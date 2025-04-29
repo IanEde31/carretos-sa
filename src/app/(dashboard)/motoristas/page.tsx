@@ -985,12 +985,12 @@ export default function MotoristasPage() {
                   </div>
                 )}
                 
-                {selectedMotorista.foto_perfil_url && (
+                {selectedMotorista.foto_perfil && (
                   <div className="border-t pt-4">
                     <h3 className="font-medium text-sm">Foto de Perfil</h3>
                     <div className="mt-2 max-w-[200px] max-h-[200px] rounded-md overflow-hidden relative">
                       <Image 
-                        src={selectedMotorista.foto_perfil_url} 
+                        src={selectedMotorista.foto_perfil} 
                         alt="Foto de perfil" 
                         width={200} 
                         height={200} 
@@ -1001,28 +1001,28 @@ export default function MotoristasPage() {
                 )}
                 
                 <div className="border-t pt-4 flex gap-4 flex-wrap">
-                  {selectedMotorista.doc_cnh_url && (
+                  {selectedMotorista.cnh_url && (
                     <div>
                       <h3 className="font-medium text-sm mb-2">CNH</h3>
-                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.doc_cnh_url, '_blank')}>
+                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.cnh_url, '_blank')}>
                         Visualizar Documento
                       </Button>
                     </div>
                   )}
                   
-                  {selectedMotorista.doc_identidade_url && (
+                  {selectedMotorista.documentos?.identidade && (
                     <div>
                       <h3 className="font-medium text-sm mb-2">Identidade</h3>
-                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.doc_identidade_url, '_blank')}>
+                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.documentos?.identidade, '_blank')}>
                         Visualizar Documento
                       </Button>
                     </div>
                   )}
                   
-                  {selectedMotorista.doc_veiculo_url && (
+                  {selectedMotorista.documento_veiculo_url && (
                     <div>
                       <h3 className="font-medium text-sm mb-2">Documento do Veículo</h3>
-                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.doc_veiculo_url, '_blank')}>
+                      <Button variant="outline" size="sm" onClick={() => window.open(selectedMotorista.documento_veiculo_url, '_blank')}>
                         Visualizar Documento
                       </Button>
                     </div>

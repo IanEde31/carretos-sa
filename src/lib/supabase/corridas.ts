@@ -3,15 +3,49 @@ import { getMotoristaById } from './motoristas';
 
 export interface Solicitacao {
   id?: string;
+  // Dados do cliente
   cliente_nome: string;
   cliente_contato: string;
+  cliente_email?: string;
+  cliente_empresa?: string;
+  
+  // Dados do endereço de origem
   endereco_origem: string;
+  cep_origem?: string;
+  numero_origem?: string;
+  complemento_origem?: string;
+  bairro_origem?: string;
+  cidade_origem?: string;
+  estado_origem?: string;
+  ponto_referencia_origem?: string;
+  
+  // Dados do endereço de destino
   endereco_destino: string;
+  cep_destino?: string;
+  numero_destino?: string;
+  complemento_destino?: string;
+  bairro_destino?: string;
+  cidade_destino?: string;
+  estado_destino?: string;
+  ponto_referencia_destino?: string;
+  
+  // Dados da carga
   descricao?: string;
-  data_solicitacao?: string;
-  status: string;
-  fotos_carga?: string[]; // Array com URLs das fotos da carga
+  dimensoes?: string;
+  peso_aproximado?: string;
+  quantidade_itens?: string;
   tipo_veiculo_requerido?: string; // Tipo de veículo necessário para a corrida
+  fotos_carga?: string[]; // Array com URLs das fotos da carga
+  
+  // Dados adicionais
+  data_solicitacao?: string;
+  data_retirada?: string; // Armazenado como string ISO no banco de dados
+  horario_retirada?: string;
+  status: string;
+  valor?: number;
+  observacoes?: string;
+  
+  // Metadados
   created_at?: string;
   updated_at?: string;
 }
@@ -37,14 +71,45 @@ export interface Corrida {
 }
 
 export interface NovaCorridaForm {
+  // Dados do cliente
   cliente_nome: string;
   cliente_contato: string;
+  cliente_email?: string;
+  cliente_empresa?: string;
+  
+  // Dados do endereço de origem
+  cep_origem?: string;
   endereco_origem: string;
+  numero_origem?: string;
+  complemento_origem?: string;
+  bairro_origem?: string;
+  cidade_origem?: string;
+  estado_origem?: string;
+  ponto_referencia_origem?: string;
+  
+  // Dados do endereço de destino
+  cep_destino?: string;
   endereco_destino: string;
+  numero_destino?: string;
+  complemento_destino?: string;
+  bairro_destino?: string;
+  cidade_destino?: string;
+  estado_destino?: string;
+  ponto_referencia_destino?: string;
+  
+  // Dados da carga
   descricao?: string;
-  fotos_carga?: File[]; // Arquivos de fotos da carga
+  dimensoes?: string;
+  peso_aproximado?: string;
+  quantidade_itens?: string;
   tipo_veiculo_requerido?: string; // Tipo de veículo necessário para a corrida
+  fotos_carga?: File[]; // Arquivos de fotos da carga
+  
+  // Dados adicionais
   valor?: string; // Valor da corrida (em reais)
+  observacoes?: string;
+  data_retirada?: Date;
+  horario_retirada?: string;
 }
 
 /**
@@ -57,15 +122,7 @@ export async function getCorridas() {
       .select(`
         *,
         solicitacao:solicitacao_id (
-          id,
-          cliente_nome,
-          cliente_contato,
-          endereco_origem,
-          endereco_destino,
-          descricao,
-          fotos_carga,
-          tipo_veiculo_requerido,
-          status
+          *
         )
       `)
       .order('created_at', { ascending: false });
@@ -114,22 +171,38 @@ export async function uploadImagens(files: File[], prefix: string): Promise<stri
   if (!files || files.length === 0) return [];
   
   try {
+    // Assumimos que o bucket 'corridas' já existe e foi configurado com as políticas corretas
+    // Não tentamos mais criar o bucket para evitar erros de permissão
+    
     const uploadedFiles: string[] = [];
     for (let index = 0; index < files.length; index++) {
       const file = files[index];
       const extension = file.name.split('.').pop();
       const fileName = `${prefix}_${Date.now()}_${index}.${extension}`;
       
+      console.log(`Enviando arquivo ${index + 1}/${files.length}: ${file.name} (${file.size} bytes)`);
+      
       // Upload do arquivo para o Storage
       const result = await supabase.storage
         .from('corridas')
-        .upload(fileName, file);
+        .upload(fileName, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
         
       // Verificar se houve erro
       if (result.error) {
         console.error('Erro ao fazer upload de arquivo:', result.error);
+        console.error('Detalhes do erro:', JSON.stringify(result.error, null, 2));
+        
+        if (result.error.message.includes('permission') || result.error.message.includes('policy')) {
+          throw new Error(`Erro de permissão ao enviar o arquivo. Verifique as políticas de acesso do bucket 'corridas'. Detalhe: ${result.error.message}`);
+        }
+        
         continue;
       }
+      
+      console.log(`Upload com sucesso: ${fileName}`);
       
       // Retornar URL pública do arquivo
       const { data: urlData } = supabase.storage
@@ -157,17 +230,62 @@ export async function criarSolicitacaoECorrida(dados: NovaCorridaForm): Promise<
       fotosUrls = await uploadImagens(dados.fotos_carga, 'carga');
     }
     
-    // 2. Criar a solicitação
+    // Formatar endereços completos para manter compatibilidade com versões anteriores
+    // Endereço de origem
+    const enderecoOrigemCompleto = `${dados.endereco_origem}${dados.numero_origem ? `, ${dados.numero_origem}` : ''}`
+      + `${dados.bairro_origem ? `, ${dados.bairro_origem}` : ''}`
+      + `${dados.cidade_origem ? `, ${dados.cidade_origem}` : ''}`
+      + `${dados.estado_origem ? ` - ${dados.estado_origem}` : ''}`;
+
+    // Endereço de destino  
+    const enderecoDestinoCompleto = `${dados.endereco_destino}${dados.numero_destino ? `, ${dados.numero_destino}` : ''}`
+      + `${dados.bairro_destino ? `, ${dados.bairro_destino}` : ''}`
+      + `${dados.cidade_destino ? `, ${dados.cidade_destino}` : ''}`
+      + `${dados.estado_destino ? ` - ${dados.estado_destino}` : ''}`;
+    
+    // 2. Criar a solicitação com todos os novos campos
     const { data: solicitacao, error: solicitacaoError } = await supabase
       .from('solicitacoes')
       .insert([{
+        // Dados do cliente
         cliente_nome: dados.cliente_nome,
         cliente_contato: dados.cliente_contato,
-        endereco_origem: dados.endereco_origem,
-        endereco_destino: dados.endereco_destino,
+        cliente_email: dados.cliente_email,
+        cliente_empresa: dados.cliente_empresa,
+        
+        // Campos de endereço legado para compatibilidade
+        endereco_origem: enderecoOrigemCompleto,
+        endereco_destino: enderecoDestinoCompleto,
+        
+        // Dados detalhados de origem
+        cep_origem: dados.cep_origem,
+        numero_origem: dados.numero_origem,
+        complemento_origem: dados.complemento_origem,
+        bairro_origem: dados.bairro_origem,
+        cidade_origem: dados.cidade_origem,
+        estado_origem: dados.estado_origem,
+        ponto_referencia_origem: dados.ponto_referencia_origem,
+        
+        // Dados detalhados de destino
+        cep_destino: dados.cep_destino,
+        numero_destino: dados.numero_destino,
+        complemento_destino: dados.complemento_destino,
+        bairro_destino: dados.bairro_destino,
+        cidade_destino: dados.cidade_destino,
+        estado_destino: dados.estado_destino,
+        ponto_referencia_destino: dados.ponto_referencia_destino,
+        
+        // Dados da carga e informações adicionais
         descricao: dados.descricao,
+        dimensoes: dados.dimensoes,
+        peso_aproximado: dados.peso_aproximado,
+        quantidade_itens: dados.quantidade_itens,
         fotos_carga: fotosUrls,
         tipo_veiculo_requerido: dados.tipo_veiculo_requerido || 'carro',
+        valor: dados.valor ? parseFloat(dados.valor) : null,
+        observacoes: dados.observacoes,
+        data_retirada: dados.data_retirada,
+        horario_retirada: dados.horario_retirada,
         status: 'pendente'
       }])
       .select()

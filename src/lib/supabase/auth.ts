@@ -95,3 +95,63 @@ export async function getUserProfile() {
   
   return data;
 }
+
+/**
+ * Convida um novo usuário via e-mail para criar senha
+ * @param email Email do usuário a ser convidado
+ * @param metadata Dados adicionais a serem armazenados no perfil do usuário
+ * @param redirectTo URL para redirecionamento após configuração de senha (opcional)
+ * @returns Objeto com status da operação e ID do usuário criado
+ */
+export async function inviteUserByEmail(
+  email: string,
+  metadata: Record<string, any>,
+  redirectTo?: string
+): Promise<{ success: boolean; userId?: string; error?: any }> {
+  try {
+    console.log(`Convidando usuário: ${email}`);
+    
+    // Criar uma senha temporária forte para o cadastro inicial
+    const tempPassword = Math.random().toString(36).slice(2) + 
+                       Math.random().toString(36).toUpperCase().slice(2) + 
+                       Math.random().toString(16).slice(2) + 
+                       '!@#$';
+    
+    // Usar o método signUp (API pública) em vez de admin.createUser
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password: tempPassword,
+      options: {
+        data: metadata, // Adicionar os metadados do usuário
+        emailRedirectTo: redirectTo || `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/autenticacao/reset-senha`
+      }
+    });
+
+    if (error) {
+      console.error('Erro ao criar usuário de autenticação:', error);
+      return { success: false, error: error.message };
+    }
+    
+    if (!data.user) {
+      console.error('Usuário não foi criado corretamente');
+      return { success: false, error: 'Falha ao criar usuário' };
+    }
+    
+    // Enviar email para redefinição de senha imediatamente após o cadastro
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: redirectTo || `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/autenticacao/reset-senha`
+    });
+    
+    if (resetError) {
+      console.error('Erro ao enviar email de redefinição de senha:', resetError);
+      // Mesmo com erro no envio do email, o usuário foi criado
+      return { success: true, userId: data.user.id, error: resetError.message };
+    }
+
+    console.log('Usuário convidado com sucesso:', data.user.id);
+    return { success: true, userId: data.user.id };
+  } catch (error) {
+    console.error('Exceção ao convidar usuário:', error);
+    return { success: false, error: error instanceof Error ? error.message : 'Erro desconhecido' };
+  }
+}

@@ -149,6 +149,16 @@ export function LoginForm() {
                 'Entrar'
               )}
             </Button>
+            
+            <div className="mt-4 text-center">
+              <span className="text-sm text-gray-600 dark:text-gray-400">Não tem uma conta? </span>
+              <a 
+                href="/cadastro" 
+                className="text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400 hover:underline"
+              >
+                Criar conta
+              </a>
+            </div>
           </div>
         </form>
       </Form>

@@ -4,14 +4,16 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { LucideBell, LucideSearch, LucideSun, LucideMoon } from 'lucide-react';
+import { LucideBell, LucideSearch } from 'lucide-react';
 import { Input } from '@/components/ui/input';
-import { useTheme } from 'next-themes';
 import { mockTeamMembers } from '@/data/mockData';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export function Header() {
-  const { setTheme, theme } = useTheme();
   const [isMobileSearchOpen, setIsMobileSearchOpen] = useState(false);
+  const [notificationsOpen, setNotificationsOpen] = useState(false);
+  const router = useRouter();
   
   // Usando o primeiro membro da equipe como usuário atual (para demonstração)
   const currentUser = mockTeamMembers[0];
@@ -51,19 +53,36 @@ export function Header() {
 
         {/* Parte direita - Botões e menu do usuário */}
         <div className="flex items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-            {theme === 'dark' ? (
-              <LucideSun className="h-5 w-5" />
-            ) : (
-              <LucideMoon className="h-5 w-5" />
-            )}
-            <span className="sr-only">Alternar tema</span>
-          </Button>
-
-          <Button variant="ghost" size="icon">
-            <LucideBell className="h-5 w-5" />
-            <span className="sr-only">Notificações</span>
-          </Button>
+          <DropdownMenu open={notificationsOpen} onOpenChange={setNotificationsOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <LucideBell className="h-5 w-5" />
+                <span className="sr-only">Notificações</span>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-80">
+              <DropdownMenuLabel>Notificações</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <div className="max-h-80 overflow-y-auto">
+                <DropdownMenuItem className="flex flex-col items-start p-3">
+                  <span className="font-medium">Nova corrida disponível</span>
+                  <span className="text-xs text-muted-foreground mt-1">Há 5 minutos atrás</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex flex-col items-start p-3">
+                  <span className="font-medium">Motorista aceitou corrida #123</span>
+                  <span className="text-xs text-muted-foreground mt-1">Há 30 minutos atrás</span>
+                </DropdownMenuItem>
+                <DropdownMenuItem className="flex flex-col items-start p-3">
+                  <span className="font-medium">Corrida #120 finalizada</span>
+                  <span className="text-xs text-muted-foreground mt-1">Hoje, 14:30</span>
+                </DropdownMenuItem>
+              </div>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="justify-center font-medium text-primary">
+                Ver todas as notificações
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -82,10 +101,10 @@ export function Header() {
                 <span className="text-xs text-muted-foreground">{currentUser.email}</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Perfil</DropdownMenuItem>
-              <DropdownMenuItem>Configurações</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/perfil')}>Perfil</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/configuracoes')}>Configurações</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Sair</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => router.push('/login')}>Sair</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

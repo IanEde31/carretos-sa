@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { 
   Car, 
@@ -65,7 +66,9 @@ export function Sidebar() {
     <>
       {/* Mobile Toggle Button */}
       <div className="flex items-center justify-between p-4 border-b lg:hidden">
-        <div className="font-bold text-xl">Frete Fácil</div>
+        <div className="flex items-center">
+          <Image src="/LogoPNG.png" alt="FreteFácil Brasil" width={120} height={40} className="h-8 w-auto" />
+        </div>
         <Button 
           variant="ghost" 
           size="icon" 
@@ -79,8 +82,10 @@ export function Sidebar() {
       {/* Desktop Sidebar */}
       <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
         <div className="flex flex-col flex-grow border-r bg-white dark:bg-gray-950 pt-5 overflow-y-auto">
-          <div className="flex justify-center items-center h-16 px-4 mb-4">
-            <h1 className="text-xl font-bold">Frete Fácil</h1>
+          <div className="flex justify-center items-center h-32 px-2 py-6 mb-4">
+            <div className="w-full h-full flex items-center justify-center">
+              <Image src="/LogoPNG.png" alt="FreteFácil Brasil" width={200} height={80} className="w-full h-auto object-contain" />
+            </div>
           </div>
           <nav className="mt-5 flex-1 px-4 space-y-2">
             {navItems.map((item) => (
@@ -121,7 +126,7 @@ export function Sidebar() {
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex items-center justify-between h-16 px-6 border-b">
-          <h1 className="text-xl font-bold">Frete Fácil</h1>
+          <Image src="/LogoPNG.png" alt="FreteFácil Brasil" width={120} height={40} className="h-8 w-auto" />
           <Button 
             variant="ghost" 
             size="icon" 

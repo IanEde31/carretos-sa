@@ -91,13 +91,13 @@ export function LoginForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700 dark:text-gray-300">Email</FormLabel>
+                <FormLabel className="text-gray-700 md:text-white">Email</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 md:text-gray-300" />
                     <Input 
                       placeholder="seu@email.com"
-                      className="pl-10 h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                      className="pl-10 h-11 bg-white md:bg-white/10 md:backdrop-blur-sm border-gray-200 md:border-white/20 text-gray-900 md:text-white"
                       {...field} 
                     />
                   </div>
@@ -113,18 +113,18 @@ export function LoginForm() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex justify-between items-center">
-                  <FormLabel className="text-gray-700 dark:text-gray-300">Senha</FormLabel>
-                  <a href="#" className="text-sm font-medium text-teal-600 hover:text-teal-500 dark:text-teal-400">
+                  <FormLabel className="text-gray-700 md:text-white">Senha</FormLabel>
+                  <a href="#" className="text-sm font-medium text-[#2f2eb7] hover:text-blue-800 md:text-white md:hover:text-gray-200">
                     Esqueceu a senha?
                   </a>
                 </div>
                 <FormControl>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 md:text-gray-300" />
                     <Input 
                       type="password"
                       placeholder="••••••"
-                      className="pl-10 h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                      className="pl-10 h-11 bg-white md:bg-white/10 md:backdrop-blur-sm border-gray-200 md:border-white/20 text-gray-900 md:text-white"
                       {...field} 
                     />
                   </div>
@@ -137,7 +137,7 @@ export function LoginForm() {
           <div className="pt-2">
             <Button 
               type="submit" 
-              className="w-full h-11 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg text-base"
+              className="w-full h-11 bg-[#2f2eb7] hover:bg-blue-800 text-white font-medium rounded-lg text-base"
               disabled={isLoading}
             >
               {isLoading ? (
@@ -151,10 +151,10 @@ export function LoginForm() {
             </Button>
             
             <div className="mt-4 text-center">
-              <span className="text-sm text-gray-600 dark:text-gray-400">Não tem uma conta? </span>
+              <span className="text-sm text-gray-600 md:text-white">Não tem uma conta? </span>
               <a 
                 href="/cadastro" 
-                className="text-sm font-medium text-teal-600 hover:text-teal-700 dark:text-teal-400 hover:underline"
+                className="text-sm font-medium text-[#2f2eb7] hover:text-blue-800 md:text-white md:hover:text-gray-200 hover:underline"
               >
                 Criar conta
               </a>

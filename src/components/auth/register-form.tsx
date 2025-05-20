@@ -121,13 +121,13 @@ export function RegisterForm() {
             name="nome"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700 dark:text-gray-300">Nome completo</FormLabel>
+                <FormLabel className="text-gray-700 md:text-white">Nome completo</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <User className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 md:text-gray-300" />
                     <Input 
                       placeholder="Seu nome completo"
-                      className="pl-10 h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                      className="pl-10 h-11 bg-white md:bg-white/10 md:backdrop-blur-sm border-gray-200 md:border-white/20 text-gray-900 md:text-white"
                       {...field} 
                     />
                   </div>
@@ -142,13 +142,13 @@ export function RegisterForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700 dark:text-gray-300">Email</FormLabel>
+                <FormLabel className="text-gray-700 md:text-white">Email</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Mail className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 md:text-gray-300" />
                     <Input 
                       placeholder="seu@email.com"
-                      className="pl-10 h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                      className="pl-10 h-11 bg-white md:bg-white/10 md:backdrop-blur-sm border-gray-200 md:border-white/20 text-gray-900 md:text-white"
                       {...field} 
                     />
                   </div>
@@ -163,14 +163,14 @@ export function RegisterForm() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700 dark:text-gray-300">Senha</FormLabel>
+                <FormLabel className="text-gray-700 md:text-white">Senha</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 md:text-gray-300" />
                     <Input 
                       type="password"
                       placeholder="••••••"
-                      className="pl-10 h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                      className="pl-10 h-11 bg-white md:bg-white/10 md:backdrop-blur-sm border-gray-200 md:border-white/20 text-gray-900 md:text-white"
                       {...field} 
                     />
                   </div>
@@ -185,14 +185,14 @@ export function RegisterForm() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-gray-700 dark:text-gray-300">Confirme sua senha</FormLabel>
+                <FormLabel className="text-gray-700 md:text-white">Confirme sua senha</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400" />
+                    <Lock className="absolute left-3 top-2.5 h-5 w-5 text-gray-400 md:text-gray-300" />
                     <Input 
                       type="password"
                       placeholder="••••••"
-                      className="pl-10 h-11 bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700"
+                      className="pl-10 h-11 bg-white md:bg-white/10 md:backdrop-blur-sm border-gray-200 md:border-white/20 text-gray-900 md:text-white"
                       {...field} 
                     />
                   </div>
@@ -205,7 +205,7 @@ export function RegisterForm() {
           <div className="pt-2">
             <Button 
               type="submit" 
-              className="w-full h-11 bg-teal-600 hover:bg-teal-700 text-white font-medium rounded-lg text-base"
+              className="w-full h-11 bg-[#2f2eb7] hover:bg-blue-800 text-white font-medium rounded-lg text-base md:bg-white/10 md:backdrop-blur-sm md:hover:bg-white/20"
               disabled={isLoading}
             >
               {isLoading ? (

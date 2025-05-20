@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import "tailwindcss-animate";
 
 :root {
   --color-background: var(--background);

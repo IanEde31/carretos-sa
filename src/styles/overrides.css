@@ -1,0 +1,30 @@
+/* Apenas corrigir componentes específicos sem afetar o sistema inteiro */
+
+/* Garantir que os menus dropdown tenham fundo sólido */
+.DropdownMenuContent {
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Garantir que os itens de menu dropdown tenham fundo sólido */
+.DropdownMenuItem {
+  background-color: white !important;
+}
+
+.DropdownMenuItem:hover {
+  background-color: #f9f9f9 !important;
+}
+
+/* Garantir que os modais tenham fundo sólido, mas manter overlay transparente */
+.DialogContent {
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Garantir que o conteúdo da barra de pesquisa tenha fundo sólido */
+.header-search input {
+  background-color: white !important;
+  border: 1px solid #e5e7eb !important;
+}

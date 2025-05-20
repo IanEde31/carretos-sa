@@ -113,7 +113,7 @@ export default function DashboardPage() {
     return (
       <div className="flex flex-col gap-4 p-4 md:p-8 items-center justify-center min-h-[70vh]">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-muted-foreground">Carregando dashboard...</p>
+        <p className="text-gray-500">Carregando dashboard...</p>
       </div>
     );
   }
@@ -123,8 +123,8 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-4 p-4 md:p-8 items-center justify-center min-h-[70vh]">
         <AlertTriangle className="h-12 w-12 text-destructive" />
         <h2 className="text-xl font-bold text-destructive">Erro de Conexão</h2>
-        <p className="text-muted-foreground text-center max-w-md">{connectionError}</p>
-        <div className="mt-4 p-4 bg-gray-100 dark:bg-gray-800 rounded-md">
+        <p className="text-gray-500 text-center max-w-md">{connectionError}</p>
+        <div className="mt-4 p-4 bg-white rounded-md">
           <h3 className="font-semibold mb-2">Possíveis soluções:</h3>
           <ul className="list-disc pl-5 space-y-1">
             <li>Verifique se as variáveis de ambiente estão configuradas no Vercel</li>
@@ -141,7 +141,7 @@ export default function DashboardPage() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-          <p className="text-muted-foreground">
+          <p className="text-gray-500">
             Visão geral do sistema Carretos.sa
           </p>
         </div>
@@ -170,7 +170,7 @@ export default function DashboardPage() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
+                  className="h-4 w-4 text-gray-500"
                 >
                   <path d="M16 3h5v5" />
                   <path d="M21 3l-7 7" />
@@ -180,7 +180,7 @@ export default function DashboardPage() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{metrics.total_corridas}</div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500">
                   +{Math.floor(Math.random() * 20)}% em relação ao mês anterior
                 </p>
               </CardContent>
@@ -199,14 +199,14 @@ export default function DashboardPage() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
+                  className="h-4 w-4 text-gray-500"
                 >
                   <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
                 </svg>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{metrics.total_motoristas}</div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500">
                   {metrics.motoristas_ativos} motoristas ativos
                 </p>
               </CardContent>
@@ -225,7 +225,7 @@ export default function DashboardPage() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
+                  className="h-4 w-4 text-gray-500"
                 >
                   <rect width="20" height="14" x="2" y="5" rx="2" />
                   <path d="M2 10h20" />
@@ -235,7 +235,7 @@ export default function DashboardPage() {
                 <div className="text-2xl font-bold">
                   R$ {metrics.faturamento_total.toFixed(2)}
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500">
                   +{Math.floor(Math.random() * 15)}% em relação ao ano anterior
                 </p>
               </CardContent>
@@ -254,14 +254,14 @@ export default function DashboardPage() {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth="2"
-                  className="h-4 w-4 text-muted-foreground"
+                  className="h-4 w-4 text-gray-500"
                 >
                   <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
                 </svg>
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{metrics.avaliacao_media.toFixed(1)}</div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-gray-500">
                   {metrics.corridas_concluidas} avaliações
                 </p>
               </CardContent>
@@ -280,7 +280,7 @@ export default function DashboardPage() {
                     rides.map((ride) => (
                       <div 
                         key={ride.id} 
-                        className="flex items-center p-3 rounded-lg hover:bg-accent cursor-pointer transition-colors"
+                        className="flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                         onClick={() => {
                           setSelectedRide(ride);
                           setRideModalOpen(true);
@@ -293,7 +293,7 @@ export default function DashboardPage() {
                           <p className="text-sm font-medium leading-none">
                             {ride.solicitacao?.endereco_origem || 'Origem não definida'} → {ride.solicitacao?.endereco_destino || 'Destino não definido'}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-gray-500">
                             {ride.valor ? `R$ ${ride.valor.toFixed(2)}` : 'Valor não definido'}
                           </p>
                         </div>
@@ -307,11 +307,11 @@ export default function DashboardPage() {
                             {ride.status}
                           </p>
                         </div>
-                        <Info className="ml-2 h-4 w-4 text-muted-foreground" />
+                        <Info className="ml-2 h-4 w-4 text-gray-500" />
                       </div>
                     ))
                   ) : (
-                    <p className="text-muted-foreground text-sm">Nenhuma corrida registrada</p>
+                    <p className="text-gray-500 text-sm">Nenhuma corrida registrada</p>
                   )}
                 </div>
               </CardContent>
@@ -327,7 +327,7 @@ export default function DashboardPage() {
                     drivers.map((driver) => (
                       <div 
                         key={driver.id} 
-                        className="flex items-center p-3 rounded-lg hover:bg-accent cursor-pointer transition-colors"
+                        className="flex items-center p-3 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
                         onClick={() => {
                           setSelectedDriver(driver);
                           setDriverModalOpen(true);
@@ -340,7 +340,7 @@ export default function DashboardPage() {
                           <p className="text-sm font-medium leading-none">
                             {driver.nome}
                           </p>
-                          <p className="text-xs text-muted-foreground">
+                          <p className="text-xs text-gray-500">
                             {typeof driver.veiculo === 'object' 
                               ? driver.veiculo?.descricao || '' 
                               : (typeof driver.veiculo === 'string' ? driver.veiculo : '')}
@@ -352,11 +352,11 @@ export default function DashboardPage() {
                             {driver.status}
                           </p>
                         </div>
-                        <Info className="ml-2 h-4 w-4 text-muted-foreground" />
+                        <Info className="ml-2 h-4 w-4 text-gray-500" />
                       </div>
                     ))
                   ) : (
-                    <p className="text-muted-foreground text-sm">Nenhum motorista ativo</p>
+                    <p className="text-gray-500 text-sm">Nenhum motorista ativo</p>
                   )}
                 </div>
               </CardContent>
@@ -398,7 +398,7 @@ export default function DashboardPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex justify-between text-xs text-muted-foreground">
+                    <div className="flex justify-between text-xs text-gray-500">
                       <div className="flex items-center">
                         <div className="w-3 h-3 rounded-full bg-green-500 mr-1"></div>
                         <span>Concluídas ({metrics.corridas_concluidas})</span>
@@ -417,14 +417,14 @@ export default function DashboardPage() {
                   <div>
                     <h3 className="text-sm font-medium mb-2">Estatísticas de Valores</h3>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                        <p className="text-xs text-muted-foreground">Valor médio por corrida</p>
+                      <div className="bg-gray-100 p-3 rounded-md">
+                        <p className="text-xs text-gray-500">Valor médio por corrida</p>
                         <p className="text-lg font-bold">
                           R$ {metrics.corridas_concluidas > 0 ? (metrics.faturamento_total / metrics.corridas_concluidas).toFixed(2) : '0.00'}
                         </p>
                       </div>
-                      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                        <p className="text-xs text-muted-foreground">Avaliação média</p>
+                      <div className="bg-gray-100 p-3 rounded-md">
+                        <p className="text-xs text-gray-500">Avaliação média</p>
                         <div className="flex items-center">
                           <p className="text-lg font-bold mr-1">{metrics.avaliacao_media.toFixed(1)}</p>
                           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 text-yellow-500">
@@ -448,14 +448,14 @@ export default function DashboardPage() {
                   <div>
                     <h3 className="text-sm font-medium mb-2">Faturamento</h3>
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                        <p className="text-xs text-muted-foreground">Faturamento Total</p>
+                      <div className="bg-gray-100 p-3 rounded-md">
+                        <p className="text-xs text-gray-500">Faturamento Total</p>
                         <p className="text-lg font-bold">
                           R$ {metrics.faturamento_total.toFixed(2)}
                         </p>
                       </div>
-                      <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md">
-                        <p className="text-xs text-muted-foreground">Mês Atual</p>
+                      <div className="bg-gray-100 p-3 rounded-md">
+                        <p className="text-xs text-gray-500">Mês Atual</p>
                         <p className="text-lg font-bold">
                           R$ {metrics.faturamento_mes_atual.toFixed(2)}
                         </p>
@@ -476,13 +476,13 @@ export default function DashboardPage() {
                                 className="w-4/5 bg-primary rounded-t" 
                                 style={{ height: `${randomHeight}%` }}
                               ></div>
-                              <p className="text-xs mt-1 text-muted-foreground">{months[index]}</p>
+                              <p className="text-xs mt-1 text-gray-500">{months[index]}</p>
                             </div>
                           );
                         })}
                       </div>
                     </div>
-                    <p className="text-xs text-center mt-2 text-muted-foreground">Faturamento dos últimos 6 meses (simulação)</p>
+                    <p className="text-xs text-center mt-2 text-gray-500">Faturamento dos últimos 6 meses (simulação)</p>
                   </div>
                 </div>
               </CardContent>
@@ -514,20 +514,20 @@ export default function DashboardPage() {
                   </div>
 
                   <div className="grid grid-cols-3 gap-4 mt-4">
-                    <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md text-center">
-                      <p className="text-xs text-muted-foreground">Média de Corridas por Motorista</p>
+                    <div className="bg-gray-100 p-3 rounded-md text-center">
+                      <p className="text-xs text-gray-500">Média de Corridas por Motorista</p>
                       <p className="text-lg font-bold">
                         {metrics.motoristas_ativos > 0 ? (metrics.total_corridas / metrics.motoristas_ativos).toFixed(1) : '0'}
                       </p>
                     </div>
-                    <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md text-center">
-                      <p className="text-xs text-muted-foreground">Taxa de Conclusão</p>
+                    <div className="bg-gray-100 p-3 rounded-md text-center">
+                      <p className="text-xs text-gray-500">Taxa de Conclusão</p>
                       <p className="text-lg font-bold">
                         {metrics.total_corridas > 0 ? `${Math.round(metrics.corridas_concluidas / metrics.total_corridas * 100)}%` : '0%'}
                       </p>
                     </div>
-                    <div className="bg-gray-100 dark:bg-gray-800 p-3 rounded-md text-center">
-                      <p className="text-xs text-muted-foreground">Faturamento por Motorista</p>
+                    <div className="bg-gray-100 p-3 rounded-md text-center">
+                      <p className="text-xs text-gray-500">Faturamento por Motorista</p>
                       <p className="text-lg font-bold">
                         R$ {metrics.motoristas_ativos > 0 ? (metrics.faturamento_total / metrics.motoristas_ativos).toFixed(2) : '0.00'}
                       </p>
@@ -543,11 +543,10 @@ export default function DashboardPage() {
 
       {/* Modal de Detalhes da Corrida */}
       <Dialog open={rideModalOpen} onOpenChange={setRideModalOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto bg-white border shadow-xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Car className="h-5 w-5" /> 
-              Detalhes da Corrida
+              <Car className="h-5 w-5" /> Detalhes da Corrida
             </DialogTitle>
             <DialogDescription>
               Informações completas sobre a corrida selecionada
@@ -562,7 +561,7 @@ export default function DashboardPage() {
                     <div>
                       <h3 className="font-medium text-sm">Cliente</h3>
                       <p className="text-sm flex items-center gap-2">
-                        <User className="h-4 w-4 text-muted-foreground" />
+                        <User className="h-4 w-4 text-gray-500" />
                         {selectedRide.solicitacao?.cliente_nome || 'Não informado'}
                       </p>
                     </div>
@@ -570,7 +569,7 @@ export default function DashboardPage() {
                     <div>
                       <h3 className="font-medium text-sm">Contato</h3>
                       <p className="text-sm flex items-center gap-2">
-                        <PhoneCall className="h-4 w-4 text-muted-foreground" />
+                        <PhoneCall className="h-4 w-4 text-gray-500" />
                         {selectedRide.solicitacao?.cliente_contato || 'Não informado'}
                       </p>
                     </div>
@@ -578,7 +577,7 @@ export default function DashboardPage() {
                     <div>
                       <h3 className="font-medium text-sm">Data da Solicitação</h3>
                       <p className="text-sm flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <Calendar className="h-4 w-4 text-gray-500" />
                         {new Date(selectedRide.created_at || '').toLocaleString('pt-BR')}
                       </p>
                     </div>
@@ -587,7 +586,7 @@ export default function DashboardPage() {
                       <div>
                         <h3 className="font-medium text-sm">Motorista</h3>
                         <p className="text-sm flex items-center gap-2">
-                          <Truck className="h-4 w-4 text-muted-foreground" />
+                          <Truck className="h-4 w-4 text-gray-500" />
                           {selectedRide.motorista_nome}
                         </p>
                       </div>
@@ -622,7 +621,7 @@ export default function DashboardPage() {
                       <div>
                         <h3 className="font-medium text-sm">Início da Corrida</h3>
                         <p className="text-sm flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <Clock className="h-4 w-4 text-gray-500" />
                           {new Date(selectedRide.data_inicio).toLocaleString('pt-BR')}
                         </p>
                       </div>
@@ -632,7 +631,7 @@ export default function DashboardPage() {
                       <div>
                         <h3 className="font-medium text-sm">Fim da Corrida</h3>
                         <p className="text-sm flex items-center gap-2">
-                          <Clock className="h-4 w-4 text-muted-foreground" />
+                          <Clock className="h-4 w-4 text-gray-500" />
                           {new Date(selectedRide.data_fim).toLocaleString('pt-BR')}
                         </p>
                       </div>
@@ -644,7 +643,7 @@ export default function DashboardPage() {
                   <div>
                     <h3 className="font-medium text-sm">Endereço de Origem</h3>
                     <p className="text-sm flex items-start gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground mt-1" />
+                      <MapPin className="h-4 w-4 text-gray-500 mt-1" />
                       {selectedRide.solicitacao?.endereco_origem || 'Não informado'}
                     </p>
                   </div>
@@ -652,7 +651,7 @@ export default function DashboardPage() {
                   <div>
                     <h3 className="font-medium text-sm">Endereço de Destino</h3>
                     <p className="text-sm flex items-start gap-2">
-                      <MapPin className="h-4 w-4 text-muted-foreground mt-1" />
+                      <MapPin className="h-4 w-4 text-gray-500 mt-1" />
                       {selectedRide.solicitacao?.endereco_destino || 'Não informado'}
                     </p>
                   </div>
@@ -660,7 +659,7 @@ export default function DashboardPage() {
                   {selectedRide.solicitacao?.descricao && (
                     <div>
                       <h3 className="font-medium text-sm">Descrição da Carga</h3>
-                      <p className="text-sm bg-accent p-3 rounded-md">
+                      <p className="text-sm bg-gray-50 p-3 rounded-md">
                         {selectedRide.solicitacao.descricao}
                       </p>
                     </div>
@@ -669,7 +668,7 @@ export default function DashboardPage() {
                   {selectedRide.observacoes && (
                     <div>
                       <h3 className="font-medium text-sm">Observações</h3>
-                      <p className="text-sm bg-accent p-3 rounded-md">
+                      <p className="text-sm bg-gray-50 p-3 rounded-md">
                         {selectedRide.observacoes}
                       </p>
                     </div>
@@ -689,11 +688,10 @@ export default function DashboardPage() {
       
       {/* Modal de Detalhes do Motorista */}
       <Dialog open={driverModalOpen} onOpenChange={setDriverModalOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+        <DialogContent className="max-w-[600px] max-h-[90vh] overflow-y-auto bg-white border shadow-xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
-              <Truck className="h-5 w-5" /> 
-              Detalhes do Motorista
+              <Truck className="h-5 w-5" /> Detalhes do Motorista
             </DialogTitle>
             <DialogDescription>
               Informações completas sobre o motorista selecionado
@@ -729,7 +727,7 @@ export default function DashboardPage() {
                     <div>
                       <h3 className="font-medium text-sm">Telefone</h3>
                       <p className="text-sm flex items-center gap-2">
-                        <PhoneCall className="h-4 w-4 text-muted-foreground" />
+                        <PhoneCall className="h-4 w-4 text-gray-500" />
                         {selectedDriver.telefone || 'Não informado'}
                       </p>
                     </div>
@@ -737,7 +735,7 @@ export default function DashboardPage() {
                     <div>
                       <h3 className="font-medium text-sm">Email</h3>
                       <p className="text-sm flex items-center gap-2">
-                        <Mail className="h-4 w-4 text-muted-foreground" />
+                        <Mail className="h-4 w-4 text-gray-500" />
                         {selectedDriver.email || 'Não informado'}
                       </p>
                     </div>
@@ -747,7 +745,7 @@ export default function DashboardPage() {
                     <div>
                       <h3 className="font-medium text-sm">Data de Cadastro</h3>
                       <p className="text-sm flex items-center gap-2">
-                        <Calendar className="h-4 w-4 text-muted-foreground" />
+                        <Calendar className="h-4 w-4 text-gray-500" />
                         {new Date(selectedDriver.data_cadastro || selectedDriver.created_at || '').toLocaleDateString('pt-BR')}
                       </p>
                     </div>
@@ -755,7 +753,7 @@ export default function DashboardPage() {
                     <div>
                       <h3 className="font-medium text-sm">Veículo</h3>
                       <p className="text-sm flex items-center gap-2">
-                        <Car className="h-4 w-4 text-muted-foreground" />
+                        <Car className="h-4 w-4 text-gray-500" />
                         {typeof selectedDriver.veiculo === 'object' 
                           ? selectedDriver.veiculo?.descricao || 'Não informado' 
                           : (typeof selectedDriver.veiculo === 'string' ? selectedDriver.veiculo : 'Não informado')}
@@ -776,7 +774,7 @@ export default function DashboardPage() {
                 <div className="border-t pt-4">
                   <div>
                     <h3 className="font-medium text-sm">Observações</h3>
-                    <p className="text-sm bg-accent p-3 rounded-md mt-2">
+                    <p className="text-sm bg-gray-50 p-3 rounded-md mt-2">
                       {'Nenhuma observação registrada'}
                     </p>
                   </div>

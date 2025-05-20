@@ -81,7 +81,7 @@ export function Sidebar() {
 
       {/* Desktop Sidebar */}
       <div className="hidden lg:flex lg:w-64 lg:flex-col lg:fixed lg:inset-y-0">
-        <div className="flex flex-col flex-grow border-r bg-white dark:bg-gray-950 pt-5 overflow-y-auto">
+        <div className="flex flex-col flex-grow border-r bg-white pt-5 overflow-y-auto">
           <div className="flex justify-center items-center h-32 px-2 py-6 mb-4">
             <div className="w-full h-full flex items-center justify-center">
               <Image src="/LogoPNG.png" alt="FreteFácil Brasil" width={200} height={80} className="w-full h-auto object-contain" />
@@ -94,8 +94,8 @@ export function Sidebar() {
                 href={item.href}
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
                   isActive(item.href)
-                    ? 'bg-gray-100 dark:bg-gray-800 text-primary'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                    ? 'bg-gray-100 text-primary'
+                    : 'text-gray-700 hover:bg-gray-50'
                 }`}
               >
                 <span className="mr-3">{item.icon}</span>
@@ -122,7 +122,7 @@ export function Sidebar() {
       )}
 
       {/* Mobile Sidebar */}
-      <div className={`fixed inset-y-0 left-0 flex flex-col z-50 w-72 max-w-[80%] bg-white dark:bg-gray-950 shadow-xl transform transition-transform duration-300 ease-in-out lg:hidden ${
+      <div className={`fixed inset-y-0 left-0 flex flex-col z-50 w-72 max-w-[80%] bg-white shadow-xl transform transition-transform duration-300 ease-in-out lg:hidden ${
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
       }`}>
         <div className="flex items-center justify-between h-16 px-6 border-b">
@@ -142,8 +142,8 @@ export function Sidebar() {
               href={item.href}
               className={`flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors ${
                 isActive(item.href)
-                  ? 'bg-gray-100 dark:bg-gray-800 text-primary'
-                  : 'text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
+                  ? 'bg-gray-100 text-primary'
+                  : 'text-gray-700 hover:bg-gray-50'
               }`}
               onClick={() => setIsMobileMenuOpen(false)}
             >

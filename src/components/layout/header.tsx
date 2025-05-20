@@ -24,7 +24,7 @@ export function Header() {
   };
 
   return (
-    <header className="sticky top-0 z-30 w-full border-b bg-background/95 backdrop-blur">
+    <header className="sticky top-0 z-30 w-full border-b bg-white backdrop-blur">
       <div className="flex h-16 items-center justify-between px-4">
         {/* Parte esquerda - Botão de pesquisa em mobile */}
         <div className="flex items-center lg:hidden">
@@ -40,13 +40,13 @@ export function Header() {
         </div>
 
         {/* Barra de pesquisa - Visível em desktop ou quando aberta em mobile */}
-        <div className={`${isMobileSearchOpen ? 'flex absolute top-16 left-0 right-0 p-2 bg-background border-b z-50' : 'hidden lg:flex'} lg:w-[400px]`}>
+        <div className={`${isMobileSearchOpen ? 'flex absolute top-16 left-0 right-0 p-2 bg-white border-b z-50' : 'hidden lg:flex'} lg:w-[400px] header-search`}>
           <div className="relative w-full">
             <LucideSearch className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
               placeholder="Buscar..."
-              className="w-full pl-8 bg-background"
+              className="w-full pl-8 bg-white border"
             />
           </div>
         </div>
@@ -60,27 +60,14 @@ export function Header() {
                 <span className="sr-only">Notificações</span>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-80">
+            <DropdownMenuContent align="end" className="w-80 bg-white border shadow-lg">
               <DropdownMenuLabel>Notificações</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <div className="max-h-80 overflow-y-auto">
-                <DropdownMenuItem className="flex flex-col items-start p-3">
-                  <span className="font-medium">Nova corrida disponível</span>
-                  <span className="text-xs text-muted-foreground mt-1">Há 5 minutos atrás</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex flex-col items-start p-3">
-                  <span className="font-medium">Motorista aceitou corrida #123</span>
-                  <span className="text-xs text-muted-foreground mt-1">Há 30 minutos atrás</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem className="flex flex-col items-start p-3">
-                  <span className="font-medium">Corrida #120 finalizada</span>
-                  <span className="text-xs text-muted-foreground mt-1">Hoje, 14:30</span>
-                </DropdownMenuItem>
+                <div className="flex flex-col items-center justify-center p-6 text-gray-500">
+                  <span>Sem nada aqui</span>
+                </div>
               </div>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="justify-center font-medium text-primary">
-                Ver todas as notificações
-              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -93,18 +80,18 @@ export function Header() {
                 </Avatar>
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuContent align="end" className="w-56 bg-white border shadow-lg">
               <DropdownMenuLabel>Minha Conta</DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="flex flex-col items-start">
+              <DropdownMenuItem className="flex flex-col items-start bg-white hover:bg-gray-50">
                 <span className="font-medium">{currentUser.nome}</span>
-                <span className="text-xs text-muted-foreground">{currentUser.email}</span>
+                <span className="text-xs text-gray-500">{currentUser.email}</span>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push('/perfil')}>Perfil</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => router.push('/configuracoes')}>Configurações</DropdownMenuItem>
+              <DropdownMenuItem className="bg-white hover:bg-gray-50" onClick={() => router.push('/perfil')}>Perfil</DropdownMenuItem>
+              <DropdownMenuItem className="bg-white hover:bg-gray-50" onClick={() => router.push('/configuracoes')}>Configurações</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem onClick={() => router.push('/login')}>Sair</DropdownMenuItem>
+              <DropdownMenuItem className="bg-white hover:bg-gray-50" onClick={() => router.push('/login')}>Sair</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </div>

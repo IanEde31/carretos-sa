@@ -48,7 +48,7 @@ const CorridaDetailsModal: React.FC<CorridaDetailsModalProps> = ({
   if (!corrida) {
     return (
       <Dialog open={open} onOpenChange={onOpenChange}>
-        <DialogContent className="max-w-[1000px] max-h-[90vh] overflow-y-auto p-0">
+        <DialogContent className="max-w-[1000px] max-h-[90vh] overflow-y-auto p-0 bg-white">
           <DialogHeader className="p-6 pb-2 border-b sticky top-0 bg-background z-10">
             <DialogTitle className="flex items-center gap-2 text-xl">
               <Car className="h-6 w-6 text-primary" /> 
@@ -65,7 +65,7 @@ const CorridaDetailsModal: React.FC<CorridaDetailsModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[450px] max-h-[90vh] overflow-y-auto p-0">
+      <DialogContent className="max-w-[450px] max-h-[90vh] overflow-y-auto p-0 bg-white">
         <DialogHeader className="p-4 pb-2 border-b sticky top-0 bg-background z-10">
           <div className="flex items-center gap-2">
             <Car className="h-5 w-5 text-primary" /> 

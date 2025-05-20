@@ -59,7 +59,7 @@ export default function MotoristasPage() {
   return (
     <div className="max-w-screen-2xl mx-auto p-4 md:p-6 lg:p-8">
       {/* Cabeçalho da página */}
-      <div className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 rounded-lg mb-8 p-6 shadow-sm">
+      <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg mb-8 p-6 shadow-sm">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Motoristas</h1>

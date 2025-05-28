@@ -300,6 +300,54 @@ const CargaTab: React.FC<CargaTabProps> = ({
               )}
             />
             
+            {/* Número de Ajudantes */}
+            <FormField
+              control={form.control}
+              name="numero_ajudantes"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="flex items-center gap-2">
+                    <Hash className="w-4 h-4" />
+                    Número de Ajudantes
+                  </FormLabel>
+                  <FormControl>
+                    <Input 
+                      type="text"
+                      inputMode="numeric"
+                      placeholder="0"
+                      {...field}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        // Permite apenas dígitos ou string vazia para o placeholder funcionar e default do Zod
+                        if (/^\d*$/.test(value)) {
+                          field.onChange(value);
+                        }
+                      }}
+                      className="focus:border-amber-500" 
+                    />
+                  </FormControl>
+                  <FormDescription>
+                    Custo adicional de R$ 100,00 por ajudante.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Exibição do Custo Adicional com Ajudantes */}
+            {/* form.watch('numero_ajudantes') agora é number devido ao z.preprocess */}
+            {(form.watch('numero_ajudantes') || 0) > 0 && (
+              <div className="md:col-span-1 mt-0 p-3 bg-amber-50 border border-amber-200 rounded-md flex items-center">
+                <p className="text-sm text-amber-700">
+                  Custo adicional com ajudantes: 
+                  <span className="font-semibold">
+                    {` R$ ${((form.watch('numero_ajudantes') || 0) * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`}
+                  </span>
+                </p>
+              </div>
+            )}
+
+            {/* O TargetContent original vem aqui para que a inserção seja ANTES dele */}
             <FormField
               control={form.control}
               name="observacoes"

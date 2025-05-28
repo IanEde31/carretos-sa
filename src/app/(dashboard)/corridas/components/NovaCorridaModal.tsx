@@ -88,6 +88,17 @@ const novaCorridaSchema = z.object({
   peso_aproximado: z.string().optional(),
   quantidade_itens: z.string().optional(),
   tipo_veiculo_requerido: z.string(),
+  numero_ajudantes: z.preprocess(
+    (val) => {
+      if (typeof val === 'string' && val.trim() === '') return 0;
+      const num = Number(val);
+      return isNaN(num) ? val : num;
+    },
+    z.number({ invalid_type_error: "Apenas números são permitidos" })
+     .int({ message: "Deve ser um número inteiro" })
+     .min(0, { message: "Não pode ser negativo" })
+     .default(0)
+  ),
   valor: z.string().optional(),
   observacoes: z.string().optional(),
   
@@ -185,12 +196,49 @@ const NovaCorridaModal: React.FC<NovaCorridaModalProps> = ({
       tipo_veiculo_requerido: '',
       valor: '',
       observacoes: '',
+      numero_ajudantes: 0, // Ajustado para default numérico com z.preprocess
     },
   });
   
   // Função para lidar com a submissão do formulário
-  const handleSubmit = (data: NovaCorrridaValues) => {
-    onSubmit(data);
+  const handleSubmit = async (data: NovaCorrridaValues) => {
+    try {
+      const custoAjudante = 100;
+      // data.numero_ajudantes já é um número devido à transformação no schema Zod e tem default 0.
+      const numeroAjudantes = data.numero_ajudantes;
+      const custoTotalAjudantes = numeroAjudantes * custoAjudante;
+
+      const valorCorridaOriginalString = data.valor || '0';
+      // Normaliza o valor: remove pontos de milhar e substitui vírgula decimal por ponto.
+      const valorNormalizado = valorCorridaOriginalString.replace(/\./g, '').replace(',', '.');
+      const valorCorridaOriginal = parseFloat(valorNormalizado) || 0;
+      
+      const valorFinalCorrida = valorCorridaOriginal + custoTotalAjudantes;
+
+      // Prepara os dados completos para submissão
+      const dadosCompletos: NovaCorrridaValues = {
+        ...data,
+        // Formata o valor final de volta para string no formato monetário brasileiro (ex: "1.234,56")
+        // O schema Zod para 'valor' espera uma string.
+        valor: valorFinalCorrida.toLocaleString('pt-BR', { style: 'decimal', minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+        numero_ajudantes: numeroAjudantes // Garante que o tipo está correto (já é número)
+      };
+      
+      await onSubmit(dadosCompletos); 
+      onOpenChange(false); // Fecha o modal em caso de sucesso
+      toast({
+        title: 'Sucesso!',
+        description: 'Nova corrida criada com sucesso.',
+        variant: 'default', // Usando 'default' para maior compatibilidade com shadcn/ui
+      });
+    } catch (error) {
+      console.error('Erro ao processar formulário de corrida:', error);
+      toast({
+        title: 'Erro ao criar corrida',
+        description: (error instanceof Error ? error.message : 'Ocorreu um erro desconhecido.'),
+        variant: 'destructive',
+      });
+    }
   };
   
   // Efeito para gerar previews de imagens quando arquivos são selecionados
@@ -348,7 +396,7 @@ const NovaCorridaModal: React.FC<NovaCorridaModalProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[85vh] overflow-y-auto p-6">
+      <DialogContent className="bg-white max-w-5xl w-full max-h-[95vh] overflow-y-auto p-6">
         <DialogHeader className="pb-4">
           <DialogTitle className="text-xl font-semibold flex items-center gap-2">
             Nova Corrida
